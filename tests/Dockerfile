@@ -2,6 +2,9 @@ from factoriotools/factorio:latest as serverbase
 
 COPY . /opt/workdir/
 
+run apt-get update \
+   && apt-get install -y curl git \
+   && rm -rf /var/lib/apt/lists/*
 
 run mkdir -p /opt/factorio/mods \
    && echo '{"mods": [{"name": "base","enabled": true}, {"name": "Testorio", "enabled": true}]}' >/opt/factorio/mods/mod-list.json \
