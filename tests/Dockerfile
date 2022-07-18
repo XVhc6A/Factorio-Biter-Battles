@@ -2,7 +2,7 @@ from factoriotools/factorio:latest as serverbase
 
 COPY . /opt/workdir/
 
-RUN apk add --update --no-cache --no-progress git
+RUN apk add --update --no-cache --no-progress openssh git
 # run apt-get update \
 #    && apt-get install -y curl git \
 #    && rm -rf /var/lib/apt/lists/*
