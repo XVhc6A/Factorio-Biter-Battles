@@ -1,0 +1,25 @@
+name: master
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build
+      uses: docker/build-push-action@v3
+      dockerfile: tests/Dockerfile
+      with:
+        tags: fbb:latest
+
+    - uses: addnab/docker-run-action@v3
+      with:
+        image: fbb:latest
+        options: -v /opt/factorio:/factorio --entrypoint "/scenario.sh" Factorio-Biter-Battles

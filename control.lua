@@ -120,3 +120,7 @@ end
 
 local Event = require 'utils.event'
 Event.add(defines.events.on_player_created, on_player_created)
+
+if script.active_mods.testorio then
+    require("__testorio__.init")({"tests/"}) -- a list of test files (require paths)
+end
