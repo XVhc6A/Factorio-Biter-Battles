@@ -12,8 +12,8 @@ run mkdir -p /opt/factorio/mods \
    && cd /opt/factorio/scenarios \
    && cp -r /opt/workdir /opt/factorio/scenarios/Factorio-Biter-Battles
 
-    - uses: addnab/docker-run-action@v3
-      with:
-        # TODO: Pin this
-        image: factoriotools/factorio:latest
-        options: -v /opt/factorio:/factorio --entrypoint "/scenario.sh" Factorio-Biter-Battles
+#     - uses: addnab/docker-run-action@v3
+#       with:
+#         # TODO: Pin this
+#         image: factoriotools/factorio:latest
+#         options: -v /opt/factorio:/factorio --entrypoint "/scenario.sh" Factorio-Biter-Battles
