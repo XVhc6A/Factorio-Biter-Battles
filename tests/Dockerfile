@@ -13,6 +13,7 @@ RUN mkdir -p /opt/factorio/mods \
    && cp /opt/workdir/tests/update_testtorio.sh /opt/factorio/mods \
    && cd /opt/factorio/mods \
    && ash ./update_testtorio.sh \
+   && cd /opt/factorio \
    && mkdir -p /opt/factorio/scenarios \
    && cd /opt/factorio/scenarios \
    && cp -r /opt/workdir /opt/factorio/scenarios/Factorio-Biter-Battles
