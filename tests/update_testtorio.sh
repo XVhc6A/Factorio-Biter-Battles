@@ -5,4 +5,5 @@ if [ -d $testorio_dir ]; then
 fi
 git clone --recurse-submodules -j8 https://github.com/GlassBricks/Testorio.git $testorio_dir
 cd $testorio_dir
+echo "Make testorio at $(pwd)"
 git checkout 8189395309aa033c7915f4c783f3cbfc9c19ade3
