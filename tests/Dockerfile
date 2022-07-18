@@ -12,8 +12,11 @@ RUN mkdir -p /opt/factorio/mods \
    && echo '{"mods": [{"name": "base","enabled": true}, {"name": "Testorio", "enabled": true}]}' >/opt/factorio/mods/mod-list.json \
    && cp /opt/workdir/tests/update_testtorio.sh /opt/factorio/mods \
    && cd /opt/factorio/mods \
-   && ash ./update_testtorio.sh
-RUN mkdir -p /opt/factorio/scenarios \
+   && ash ./update_testtorio.sh \
+   && cd /opt/factorio \
+   && ls \
+   && pwd \
+   && mkdir -p scenarios \
    && cd /opt/factorio/scenarios \
    && cp -r /opt/workdir /opt/factorio/scenarios/Factorio-Biter-Battles
 
