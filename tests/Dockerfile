@@ -6,12 +6,13 @@ RUN apk add --update --no-cache --no-progress git
 # run apt-get update \
 #    && apt-get install -y curl git \
 #    && rm -rf /var/lib/apt/lists/*
+#    && bash ./update_testtorio.sh \
 
 RUN mkdir -p /opt/factorio/mods \
    && echo '{"mods": [{"name": "base","enabled": true}, {"name": "Testorio", "enabled": true}]}' >/opt/factorio/mods/mod-list.json \
    && cp /opt/workdir/tests/update_testtorio.sh /opt/factorio/mods \
    && cd /opt/factorio/mods \
-   && bash ./update_testtorio.sh \
+   && ash ./update_testtorio.sh \
    && mkdir -p /opt/factorio/scenarios \
    && cd /opt/factorio/scenarios \
    && cp -r /opt/workdir /opt/factorio/scenarios/Factorio-Biter-Battles
