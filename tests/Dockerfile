@@ -16,6 +16,7 @@ RUN mkdir -p /opt/factorio/mods \
    && cd /opt/factorio \
    && ls \
    && pwd \
+   && /opt/workdir \
    && mkdir -p scenarios \
    && cd /opt/factorio/scenarios \
    && cp -r /opt/workdir /opt/factorio/scenarios/Factorio-Biter-Battles
