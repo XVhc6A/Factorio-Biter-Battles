@@ -15,8 +15,8 @@ jobs:
 
     - name: Build
       uses: docker/build-push-action@v3
-      file: tests/Dockerfile
       with:
+        file: tests/Dockerfile
         tags: fbb:latest
 
     - uses: addnab/docker-run-action@v3
