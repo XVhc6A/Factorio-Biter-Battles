@@ -49,14 +49,12 @@ class FactorioProcessManager:
         while self.factorio_process is not None and await self.is_running() and (time.time() - start) < self.timeout:
             if self.factorio_process.stdout is not None:
                 print("running get lines")
-                line = (await self.factorio_process.stdout.readline()).decode().rstrip("\n")
-                print("got line", line)
-                if line:
+                try:
+                    line = (await asyncio.wait_for(self.factorio_process.stdout.readline(), timeout=1.0)).decode().rstrip("\n")
                     self.logs.append(line)
                     start = time.time()
-                else:
-                    time.sleep(0.25)
-                    break
+                except asyncio.TimeoutError:
+                    await asyncio.sleep(0.25)
 
     async def end_game(self):
         if self.factorio_process:
