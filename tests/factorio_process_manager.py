@@ -22,7 +22,7 @@ class FactorioProcessManager:
         self.factorio_exe = factorio_exe
         self.factorio_args = self.default_factorio_args() + factorio_args
         self.factorio_process = None
-        self.timeout = 20.0
+        self.timeout = 30.0
         self.logs = []
 
     def default_factorio_args(self) -> List[str]:
@@ -48,12 +48,13 @@ class FactorioProcessManager:
         start = time.time()
         while self.factorio_process is not None and await self.is_running() and (time.time() - start) < self.timeout:
             if self.factorio_process.stdout is not None:
-                print("running get lines")
                 try:
                     line = (await asyncio.wait_for(self.factorio_process.stdout.readline(), timeout=1.0)).decode().rstrip("\n")
+                    print(line)
                     self.logs.append(line)
                     start = time.time()
                 except asyncio.TimeoutError:
+                    print(f"Sleeping {time.time()-start}")
                     await asyncio.sleep(0.25)
 
     async def end_game(self):

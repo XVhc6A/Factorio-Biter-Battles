@@ -2,6 +2,7 @@ require 'utils.data_stages'
 _LIFECYCLE = _STAGE.control -- Control stage
 _DEBUG = false
 _DUMP_ENV = false
+print("starting loading??")
 
 require 'utils.server'
 require 'utils.server_commands'
@@ -81,7 +82,9 @@ require 'comfy_panel.special_games'
 
 ---------------- ENABLE MAPS HERE ----------------
 --![[North VS South Survival PVP, feed the opposing team's biters with science flasks. Disable Autostash, Group and Poll modules.]]--
+print("end starting loading??")
 require 'maps.biter_battles_v2.main'
+print("f starting loading??")
 
 ---------------------------------------------------------------
 
