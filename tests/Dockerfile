@@ -3,7 +3,7 @@ from factoriotools/factorio:latest as serverbase
 
 ENV PYTHONUNBUFFERED=1
 
-RUN apk add --update --no-cache --no-progress npm openssh git python3 py3-pip \
+RUN apk add --update --no-cache --no-progress npm openssh git python3 py3-pip libstdc++6 \
    && ln -sf python3 /usr/bin/python \
    && npm install -g n \
    && n stable \
