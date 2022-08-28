@@ -299,6 +299,7 @@ local function clear_corpses(cmd)
         player.print('Cleared biter-corpses.', Color.success)
 end
 
+
 local function on_init()
 	Init.tables()
 	Init.initial_setup()
@@ -308,8 +309,11 @@ local function on_init()
 	Init.load_spawn()
 
 	if script.active_mods.testorio then
-		require("__testorio__.init")({"tests/maps/biter_battles_v2/config"}) -- a list of test files (require paths)
+		print("notsure??")
+		-- require("__testorio__.init")({"tests/maps/biter_battles_v2/config"}) -- a list of test files (require paths)
+		print("notsure2??")
 		local mod_under_test = remote.call("testorio", "runTests")
+		print("notsure3??")
 	end
 end
 

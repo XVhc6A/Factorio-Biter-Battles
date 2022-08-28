@@ -2,7 +2,6 @@ require 'utils.data_stages'
 _LIFECYCLE = _STAGE.control -- Control stage
 _DEBUG = false
 _DUMP_ENV = false
-print("starting loading??")
 
 require 'utils.server'
 require 'utils.server_commands'
@@ -82,9 +81,7 @@ require 'comfy_panel.special_games'
 
 ---------------- ENABLE MAPS HERE ----------------
 --![[North VS South Survival PVP, feed the opposing team's biters with science flasks. Disable Autostash, Group and Poll modules.]]--
-print("end starting loading??")
 require 'maps.biter_battles_v2.main'
-print("f starting loading??")
 
 ---------------------------------------------------------------
 
@@ -116,6 +113,13 @@ local function on_player_created(event)
     player.gui.left.style = 'slot_table_spacing_vertical_flow'
 end
 
+require "maps.biter_battles_v2.tests_init"
+if script.active_mods.testorio then
+	print("requireing??????")
+	require("__testorio__.init")({"tests/maps/biter_battles_v2/config"}) -- a list of test files (require paths)
+	-- local mod_under_test = remote.call("testorio", "runTests")
+end
+
 local loaded = _G.package.loaded
 function require(path)
     return loaded[path] or error('Can only require files at runtime that have been required in the control stage.', 2)
@@ -123,3 +127,4 @@ end
 
 local Event = require 'utils.event'
 Event.add(defines.events.on_player_created, on_player_created)
+

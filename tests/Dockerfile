@@ -17,14 +17,15 @@ COPY . /opt/workdir/
 
 RUN mkdir -p /factorio/mods /factorio/scenarios /factorio/saves \
    && ln -s /factorio/mods  /opt/factorio/mods \
-   && echo '{"mods": [{"name": "base","enabled": true}, {"name": "Testorio", "enabled": true}]}' > /opt/factorio/mods/mod-list.json \
+   && echo '{"mods": [{"name": "base","enabled": true}, {"name": "testorio", "enabled": true}]}' > /opt/factorio/mods/mod-list.json \
    && cd /opt/workdir/tests \
    && ash ./update_testtorio.sh \
    && cd Testorio \
    && npm install \
-   && npm run build:all \
-   && cp -r src /factorio/mods/Testorio \
+   && npm run build:mod \
+   && cp -r src /factorio/mods/testorio \
    && cp -r /opt/workdir /factorio/scenarios/Factorio-Biter-Battles
+   # && npm run build:all \
    # && cd luassert \
    # && npm run build \
    # && cd ../ \
