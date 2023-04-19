@@ -14,8 +14,7 @@ sGMCGR/oImoOGCJBi6QhSlw4gUz3DXA8LzADuM5zHdgZAYxQKq+A
 MUgPEjihRgFoQUcmBkQAJi8BPc6XQMAy367Og==<<<
 ]]
 
-
-local get_noise = require "utils.get_noise"
+local get_noise = require("utils.get_noise")
 local math_random = math.random
 local math_floor = math.floor
 local math_abs = math.abs
@@ -23,20 +22,41 @@ local math_abs = math.abs
 local spawn_size = 160
 local spawn_check = spawn_size + 96
 
-local waters = {"deepwater", "water"}
+local waters = { "deepwater", "water" }
 
 local function is_water(position, noise, seed)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/terrain_layouts/watery_world.lua:26')
 	if math_abs(position.y) <= spawn_check or math_abs(position.x) <= spawn_check then
 		local border_noise = get_noise("cave_ponds", position, seed)
-		if math_abs(position.x) + border_noise * 10 < spawn_size and math_abs(position.y) + border_noise * 10 < spawn_size then return false end
-		if math_abs(position.x) + border_noise * 10 < spawn_size + 32 and math_abs(position.y) + border_noise * 10 < spawn_size + 32 then return true end
+		if
+			math_abs(position.x) + border_noise * 10 < spawn_size
+			and math_abs(position.y) + border_noise * 10 < spawn_size
+		then
+			log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/terrain_layouts/watery_world.lua:33')
+			return false
+		end
+		if
+			math_abs(position.x) + border_noise * 10 < spawn_size + 32
+			and math_abs(position.y) + border_noise * 10 < spawn_size + 32
+		then
+			log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/terrain_layouts/watery_world.lua:39')
+			return true
+		end
 	end
-	if math_abs(noise) < 0.15 then return end
-	if math_abs(noise) > 0.80 then return end
+	if math_abs(noise) < 0.15 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/terrain_layouts/watery_world.lua:43')
+		return
+	end
+	if math_abs(noise) > 0.80 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/terrain_layouts/watery_world.lua:46')
+		return
+	end
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/terrain_layouts/watery_world.lua:48')
 	return true
 end
 
-local function on_chunk_generated(event)	
+local function on_chunk_generated(event)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/terrain_layouts/watery_world.lua:51')
 	local surface = event.surface
 	local seed = surface.map_gen_settings.seed
 	local left_top_x = event.area.left_top.x
@@ -45,24 +65,28 @@ local function on_chunk_generated(event)
 	local get_tile = surface.get_tile
 	local position
 	local noise
-	
+
 	for x = 0, 31, 1 do
-		for y = 0, 31, 1 do			
-			position = {x = left_top_x + x, y = left_top_y + y}				
-			if not get_tile(position).collides_with("resource-layer") then 
+		for y = 0, 31, 1 do
+			position = { x = left_top_x + x, y = left_top_y + y }
+			if not get_tile(position).collides_with("resource-layer") then
 				noise = get_noise("watery_world", position, seed)
 				if is_water(position, noise, seed) then
-					set_tiles({{name = waters[math_floor(noise * 10 % 2 + 1)], position = position}}, true)
-					if math_random(1, 128) == 1 then 
-						surface.create_entity({name = global.watery_world_fishes[math_random(1, #global.watery_world_fishes)], position = position})
+					set_tiles({ { name = waters[math_floor(noise * 10 % 2 + 1)], position = position } }, true)
+					if math_random(1, 128) == 1 then
+						surface.create_entity({
+							name = global.watery_world_fishes[math_random(1, #global.watery_world_fishes)],
+							position = position,
+						})
 					end
 				end
-			end				
+			end
 		end
 	end
 end
 
 local function on_init()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/terrain_layouts/watery_world.lua:80')
 	global.watery_world_fishes = {}
 	for _, prototype in pairs(game.entity_prototypes) do
 		if prototype.type == "fish" then
@@ -71,6 +95,6 @@ local function on_init()
 	end
 end
 
-local Event = require 'utils.event'
+local Event = require("utils.event")
 Event.on_init(on_init)
 Event.add(defines.events.on_chunk_generated, on_chunk_generated)

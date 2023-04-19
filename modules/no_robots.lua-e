@@ -1,6 +1,7 @@
-local event = require 'utils.event' 
+local event = require("utils.event")
 
 local function on_player_joined_game(event)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/no_robots.lua:2')
 	game.forces["player"].technologies["logistic-system"].enabled = false
 	game.forces["player"].technologies["construction-robotics"].enabled = false
 	game.forces["player"].technologies["logistic-robotics"].enabled = false
@@ -12,7 +13,7 @@ local function on_player_joined_game(event)
 	game.forces["player"].technologies["auto-character-logistic-trash-slots"].enabled = false
 	game.forces["player"].technologies["worker-robots-storage-1"].enabled = false
 	game.forces["player"].technologies["worker-robots-storage-2"].enabled = false
-	game.forces["player"].technologies["worker-robots-storage-3"].enabled = false	
+	game.forces["player"].technologies["worker-robots-storage-3"].enabled = false
 	game.forces["player"].technologies["character-logistic-slots-1"].enabled = false
 	game.forces["player"].technologies["character-logistic-slots-2"].enabled = false
 	game.forces["player"].technologies["character-logistic-slots-3"].enabled = false
@@ -26,5 +27,5 @@ local function on_player_joined_game(event)
 	game.forces["player"].technologies["worker-robots-speed-5"].enabled = false
 	game.forces["player"].technologies["worker-robots-speed-6"].enabled = false
 end
-	
+
 event.add(defines.events.on_player_joined_game, on_player_joined_game)

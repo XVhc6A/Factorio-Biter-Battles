@@ -1,10 +1,10 @@
 --Mining or breaking a rock paints the tiles underneath
-local event = require 'utils.event'
+local event = require("utils.event")
 
 local valid_entities = {
 	["rock-big"] = true,
 	["rock-huge"] = true,
-	["sand-rock-big"] = true	
+	["sand-rock-big"] = true,
 }
 
 local replacement_tiles = {
@@ -12,37 +12,57 @@ local replacement_tiles = {
 	["dirt-7"] = "dirt-6",
 	["dirt-6"] = "dirt-5",
 	["dirt-5"] = "dirt-4",
-	["dirt-4"] = "dirt-3",	
-	["dirt-3"] = "dirt-2"
+	["dirt-4"] = "dirt-3",
+	["dirt-3"] = "dirt-2",
 }
 
 local coords = {
-		{x = 0, y = 0},{x = -1, y = -1},{x = 1, y = -1},
-		{x = 0, y = -1},{x = -1, y = 0},{x = -1, y = 1},
-		{x = 0, y = 1},{x = 1, y = 1},{x = 1, y = 0},
-		{x = 2, y = 0},{x = -2, y = 0},{x = 0, y = 2},{x = 0, y = -2}
-	}
+	{ x = 0, y = 0 },
+	{ x = -1, y = -1 },
+	{ x = 1, y = -1 },
+	{ x = 0, y = -1 },
+	{ x = -1, y = 0 },
+	{ x = -1, y = 1 },
+	{ x = 0, y = 1 },
+	{ x = 1, y = 1 },
+	{ x = 1, y = 0 },
+	{ x = 2, y = 0 },
+	{ x = -2, y = 0 },
+	{ x = 0, y = 2 },
+	{ x = 0, y = -2 },
+}
 
 local function on_pre_player_mined_item(event)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/rocks_broken_paint_tiles.lua:34')
 	local entity = event.entity
-	if not valid_entities[entity.name] then return end	
-	
+	if not valid_entities[entity.name] then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/rocks_broken_paint_tiles.lua:37')
+		return
+	end
+
 	local tiles = {}
 	for _, p in pairs(coords) do
-		local pos = {x = entity.position.x + p.x, y = entity.position.y + p.y}
-		local tile = entity.surface.get_tile(pos)		
+		local pos = { x = entity.position.x + p.x, y = entity.position.y + p.y }
+		local tile = entity.surface.get_tile(pos)
 		if not tile.collides_with("player-layer") then
-			if replacement_tiles[tile.name] and math.random(1,2) == 1 then
-				table.insert(tiles, {name = replacement_tiles[tile.name], position = pos})
+			if replacement_tiles[tile.name] and math.random(1, 2) == 1 then
+				table.insert(tiles, { name = replacement_tiles[tile.name], position = pos })
 			end
-		end			
+		end
 	end
-	if #tiles == 0 then return end		
+	if #tiles == 0 then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/rocks_broken_paint_tiles.lua:51')
+		return
+	end
 	entity.surface.set_tiles(tiles, true)
 end
 
-local function on_entity_died(event)	
-	if not event.entity.valid then return end
+local function on_entity_died(event)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/rocks_broken_paint_tiles.lua:56')
+	if not event.entity.valid then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/rocks_broken_paint_tiles.lua:58')
+		return
+	end
 	on_pre_player_mined_item(event)
 end
 

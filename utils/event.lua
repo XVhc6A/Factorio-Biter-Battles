@@ -51,15 +51,18 @@
 -- ** Event.add_removable_function(event_name, func) **
 --
 -- Only use this function if you can't use Event.add_removable. i.e you are registering the handler at the console.
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:52')
 -- The same restrictions that apply to Event.add_removable also apply to Event.add_removable_function.
 -- func cannot be a closure in this case, as there is no safe way to store closures in the global table.
 -- A closure is a function that uses a local variable not defined in the function.
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:55')
 --
 -- @usage
 -- local Event = require 'utils.event'
 --
 -- If you want to remove the handler you will need to keep a reference to it.
 -- global.handler = function(event)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:61')
 --     game.print(serpent.block(event)) -- prints the content of the event table to console.
 -- end
 --
@@ -95,10 +98,10 @@
 -- The table contains extra information that you want to pass to the handler.
 -- script.raise_event(event_id, {extra = 'data'})
 
-local EventCore = require 'utils.event_core'
-local Global = require 'utils.global'
-local Token = require 'utils.token'
-local Debug = require 'utils.debug'
+local EventCore = require("utils.event_core")
+local Global = require("utils.global")
+local Token = require("utils.token")
+local Debug = require("utils.debug")
 
 local table_remove = table.remove
 local core_add = EventCore.add
@@ -124,83 +127,90 @@ local token_nth_tick_handlers = {}
 local function_handlers = {}
 local function_nth_tick_handlers = {}
 
-Global.register(
-    {
-        token_handlers = token_handlers,
-        token_nth_tick_handlers = token_nth_tick_handlers,
-        function_handlers = function_handlers,
-        function_nth_tick_handlers = function_nth_tick_handlers
-    },
-    function(tbl)
-        token_handlers = tbl.token_handlers
-        token_nth_tick_handlers = tbl.token_nth_tick_handlers
-        function_handlers = tbl.function_handlers
-        function_nth_tick_handlers = tbl.function_nth_tick_handlers
-    end
-)
+Global.register({
+	token_handlers = token_handlers,
+	token_nth_tick_handlers = token_nth_tick_handlers,
+	function_handlers = function_handlers,
+	function_nth_tick_handlers = function_nth_tick_handlers,
+}, function(tbl)
+	token_handlers = tbl.token_handlers
+	token_nth_tick_handlers = tbl.token_nth_tick_handlers
+	function_handlers = tbl.function_handlers
+	function_nth_tick_handlers = tbl.function_nth_tick_handlers
+end)
 
 local function remove(tbl, handler)
-    if tbl == nil then
-        return
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:138')
+	if tbl == nil then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:140')
+		return
+	end
 
-    -- the handler we are looking for is more likly to be at the back of the array.
-    for i = #tbl, 1, -1 do
-        if tbl[i] == handler then
-            table_remove(tbl, i)
-            break
-        end
-    end
+	-- the handler we are looking for is more likly to be at the back of the array.
+	for i = #tbl, 1, -1 do
+		if tbl[i] == handler then
+			table_remove(tbl, i)
+			break
+		end
+	end
 end
 
 --- Register a handler for the event_name event.
 -- This function must be called in the control stage or in Event.on_init or Event.on_load.
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:153')
 -- See documentation at top of file for details on using events.
 -- @param event_name<number>
 -- @param handler<function>
 function Event.add(event_name, handler)
-    if _LIFECYCLE == 8 then
-        error('Calling Event.add after on_init() or on_load() has run is a desync risk.', 2)
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:157')
+	if _LIFECYCLE == 8 then
+		error("Calling Event.add after on_init() or on_load() has run is a desync risk.", 2)
+	end
 
-    core_add(event_name, handler)
+	core_add(event_name, handler)
 end
 
 --- Register a handler for the script.on_init event.
 -- This function must be called in the control stage or in Event.on_init or Event.on_load
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:166')
 -- See documentation at top of file for details on using events.
 -- @param handler<function>
 function Event.on_init(handler)
-    if _LIFECYCLE == 8 then
-        error('Calling Event.on_init after on_init() or on_load() has run is a desync risk.', 2)
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:169')
+	if _LIFECYCLE == 8 then
+		error("Calling Event.on_init after on_init() or on_load() has run is a desync risk.", 2)
+	end
 
-    core_on_init(handler)
+	core_on_init(handler)
 end
 
 --- Register a handler for the script.on_load event.
 -- This function must be called in the control stage or in Event.on_init or Event.on_load
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:178')
 -- See documentation at top of file for details on using events.
 -- @param handler<function>
 function Event.on_load(handler)
-    if _LIFECYCLE == 8 then
-        error('Calling Event.on_load after on_init() or on_load() has run is a desync risk.', 2)
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:181')
+	if _LIFECYCLE == 8 then
+		error("Calling Event.on_load after on_init() or on_load() has run is a desync risk.", 2)
+	end
 
-    core_on_load(handler)
+	core_on_load(handler)
 end
 
 --- Register a handler for the nth_tick event.
 -- This function must be called in the control stage or in Event.on_init or Event.on_load.
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:190')
 -- See documentation at top of file for details on using events.
 -- @param tick<number> The handler will be called every nth tick
 -- @param handler<function>
 function Event.on_nth_tick(tick, handler)
-    if _LIFECYCLE == 8 then
-        error('Calling Event.on_nth_tick after on_init() or on_load() has run is a desync risk.', 2)
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:194')
+	if _LIFECYCLE == 8 then
+		error("Calling Event.on_nth_tick after on_init() or on_load() has run is a desync risk.", 2)
+	end
 
-    core_on_nth_tick(tick, handler)
+	core_on_nth_tick(tick, handler)
 end
 
 --- Register a token handler that can be safely added and removed at runtime.
@@ -209,24 +219,25 @@ end
 -- @param  event_name<number>
 -- @param  token<number>
 function Event.add_removable(event_name, token)
-    if type(token) ~= 'number' then
-        error('token must be a number', 2)
-    end
-    if _LIFECYCLE == stage_load then
-        error('cannot call during on_load', 2)
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:207')
+	if type(token) ~= "number" then
+		error("token must be a number", 2)
+	end
+	if _LIFECYCLE == stage_load then
+		error("cannot call during on_load", 2)
+	end
 
-    local tokens = token_handlers[event_name]
-    if not tokens then
-        token_handlers[event_name] = {token}
-    else
-        tokens[#tokens + 1] = token
-    end
+	local tokens = token_handlers[event_name]
+	if not tokens then
+		token_handlers[event_name] = { token }
+	else
+		tokens[#tokens + 1] = token
+	end
 
-    if handlers_added then
-        local handler = Token.get(token)
-        core_add(event_name, handler)
-    end
+	if handlers_added then
+		local handler = Token.get(token)
+		core_add(event_name, handler)
+	end
 end
 
 --- Removes a token handler for the given event_name.
@@ -235,24 +246,26 @@ end
 -- @param  event_name<number>
 -- @param  token<number>
 function Event.remove_removable(event_name, token)
-    if _LIFECYCLE == stage_load then
-        error('cannot call during on_load', 2)
-    end
-    local tokens = token_handlers[event_name]
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:233')
+	if _LIFECYCLE == stage_load then
+		error("cannot call during on_load", 2)
+	end
+	local tokens = token_handlers[event_name]
 
-    if not tokens then
-        return
-    end
+	if not tokens then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:240')
+		return
+	end
 
-    local handler = Token.get(token)
-    local handlers = event_handlers[event_name]
+	local handler = Token.get(token)
+	local handlers = event_handlers[event_name]
 
-    remove(tokens, token)
-    remove(handlers, handler)
+	remove(tokens, token)
+	remove(handlers, handler)
 
-    if #handlers == 0 then
-        script_on_event(event_name, nil)
-    end
+	if #handlers == 0 then
+		script_on_event(event_name, nil)
+	end
 end
 
 --- Register a handler that can be safely added and removed at runtime.
@@ -263,46 +276,48 @@ end
 -- @param  func<function>
 -- @param  name<string>
 function Event.add_removable_function(event_name, func, name)
-    if _LIFECYCLE == stage_load then
-        error('cannot call during on_load', 2)
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:261')
+	if _LIFECYCLE == stage_load then
+		error("cannot call during on_load", 2)
+	end
 
-    if not event_name or not func or not name then
-        return
-    end
+	if not event_name or not func or not name then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:267')
+		return
+	end
 
-    local f = assert(load('return ' .. func))()
+	local f = assert(load("return " .. func))()
 
-    if type(f) ~= 'function' then
-        error('func must be a function', 2)
-    end
+	if type(f) ~= "function" then
+		error("func must be a function", 2)
+	end
 
-    if Debug.is_closure(f) then
-        error(
-            'func cannot be a closure as that is a desync risk. Consider using Event.add_removable(event, token) instead.',
-            2
-        )
-    end
+	if Debug.is_closure(f) then
+		error(
+			"func cannot be a closure as that is a desync risk. Consider using Event.add_removable(event, token) instead.",
+			2
+		)
+	end
 
-    local funcs = function_handlers[name]
-    if not funcs then
-        function_handlers[name] = {}
-        funcs = function_handlers[name]
-    end
+	local funcs = function_handlers[name]
+	if not funcs then
+		function_handlers[name] = {}
+		funcs = function_handlers[name]
+	end
 
-    funcs[#funcs + 1] = {event_name = event_name, handler = func}
+	funcs[#funcs + 1] = { event_name = event_name, handler = func }
 
-    local func_table = function_table[name]
-    if not func_table then
-        function_table[name] = {}
-        func_table = function_table[name]
-    end
+	local func_table = function_table[name]
+	if not func_table then
+		function_table[name] = {}
+		func_table = function_table[name]
+	end
 
-    func_table[#func_table + 1] = {event_name = event_name, handler = f}
+	func_table[#func_table + 1] = { event_name = event_name, handler = f }
 
-    if handlers_added then
-        core_add(event_name, f)
-    end
+	if handlers_added then
+		core_add(event_name, f)
+	end
 end
 
 --- Removes a handler for the given event_name.
@@ -311,38 +326,41 @@ end
 -- @param  event_name<number>
 -- @param  name<string>
 function Event.remove_removable_function(event_name, name)
-    if _LIFECYCLE == stage_load then
-        error('cannot call during on_load', 2)
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:309')
+	if _LIFECYCLE == stage_load then
+		error("cannot call during on_load", 2)
+	end
 
-    if not event_name or not name then
-        return
-    end
+	if not event_name or not name then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:315')
+		return
+	end
 
-    local funcs = function_handlers[name]
+	local funcs = function_handlers[name]
 
-    if not funcs then
-        return
-    end
+	if not funcs then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:321')
+		return
+	end
 
-    local handlers = event_handlers[event_name]
+	local handlers = event_handlers[event_name]
 
-    for k, v in pairs(function_table[name]) do
-        local n = v.event_name
-        if n == event_name then
-            local f = v.handler
-            function_handlers[name][k] = nil
-            remove(handlers, f)
-        end
-    end
+	for k, v in pairs(function_table[name]) do
+		local n = v.event_name
+		if n == event_name then
+			local f = v.handler
+			function_handlers[name][k] = nil
+			remove(handlers, f)
+		end
+	end
 
-    if #handlers == 0 then
-        script_on_event(event_name, nil)
-    end
+	if #handlers == 0 then
+		script_on_event(event_name, nil)
+	end
 
-    if #function_handlers[name] == 0 then
-        function_handlers[name] = nil
-    end
+	if #function_handlers[name] == 0 then
+		function_handlers[name] = nil
+	end
 end
 
 --- Register a token handler for the nth tick that can be safely added and removed at runtime.
@@ -351,24 +369,25 @@ end
 -- @param  tick<number>
 -- @param  token<number>
 function Event.add_removable_nth_tick(tick, token)
-    if _LIFECYCLE == stage_load then
-        error('cannot call during on_load', 2)
-    end
-    if type(token) ~= 'number' then
-        error('token must be a number', 2)
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:349')
+	if _LIFECYCLE == stage_load then
+		error("cannot call during on_load", 2)
+	end
+	if type(token) ~= "number" then
+		error("token must be a number", 2)
+	end
 
-    local tokens = token_nth_tick_handlers[tick]
-    if not tokens then
-        token_nth_tick_handlers[tick] = {token}
-    else
-        tokens[#tokens + 1] = token
-    end
+	local tokens = token_nth_tick_handlers[tick]
+	if not tokens then
+		token_nth_tick_handlers[tick] = { token }
+	else
+		tokens[#tokens + 1] = token
+	end
 
-    if handlers_added then
-        local handler = Token.get(token)
-        core_on_nth_tick(tick, handler)
-    end
+	if handlers_added then
+		local handler = Token.get(token)
+		core_on_nth_tick(tick, handler)
+	end
 end
 
 --- Removes a token handler for the nth tick.
@@ -377,24 +396,26 @@ end
 -- @param  tick<number>
 -- @param  token<number>
 function Event.remove_removable_nth_tick(tick, token)
-    if _LIFECYCLE == stage_load then
-        error('cannot call during on_load', 2)
-    end
-    local tokens = token_nth_tick_handlers[tick]
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:375')
+	if _LIFECYCLE == stage_load then
+		error("cannot call during on_load", 2)
+	end
+	local tokens = token_nth_tick_handlers[tick]
 
-    if not tokens then
-        return
-    end
+	if not tokens then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:382')
+		return
+	end
 
-    local handler = Token.get(token)
-    local handlers = on_nth_tick_event_handlers[tick]
+	local handler = Token.get(token)
+	local handlers = on_nth_tick_event_handlers[tick]
 
-    remove(tokens, token)
-    remove(handlers, handler)
+	remove(tokens, token)
+	remove(handlers, handler)
 
-    if #handlers == 0 then
-        script_on_nth_tick(tick, nil)
-    end
+	if #handlers == 0 then
+		script_on_nth_tick(tick, nil)
+	end
 end
 
 --- Register a handler for the nth tick that can be safely added and removed at runtime.
@@ -404,46 +425,48 @@ end
 -- @param  tick<number>
 -- @param  func<function>
 function Event.add_removable_nth_tick_function(tick, func, name)
-    if _LIFECYCLE == stage_load then
-        error('cannot call during on_load', 2)
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:402')
+	if _LIFECYCLE == stage_load then
+		error("cannot call during on_load", 2)
+	end
 
-    if not tick or not func or not name then
-        return
-    end
+	if not tick or not func or not name then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:408')
+		return
+	end
 
-    local f = assert(load('return ' .. func))()
+	local f = assert(load("return " .. func))()
 
-    if type(f) ~= 'function' then
-        error('func must be a function', 2)
-    end
+	if type(f) ~= "function" then
+		error("func must be a function", 2)
+	end
 
-    if Debug.is_closure(f) then
-        error(
-            'func cannot be a closure as that is a desync risk. Consider using Event.add_removable_nth_tick(tick, token) instead.',
-            2
-        )
-    end
+	if Debug.is_closure(f) then
+		error(
+			"func cannot be a closure as that is a desync risk. Consider using Event.add_removable_nth_tick(tick, token) instead.",
+			2
+		)
+	end
 
-    local funcs = function_nth_tick_handlers[name]
-    if not funcs then
-        function_nth_tick_handlers[name] = {}
-        funcs = function_nth_tick_handlers[name]
-    end
+	local funcs = function_nth_tick_handlers[name]
+	if not funcs then
+		function_nth_tick_handlers[name] = {}
+		funcs = function_nth_tick_handlers[name]
+	end
 
-    funcs[#funcs + 1] = {tick = tick, handler = func}
+	funcs[#funcs + 1] = { tick = tick, handler = func }
 
-    local func_table = function_nth_tick_table[name]
-    if not func_table then
-        function_nth_tick_table[name] = {}
-        func_table = function_nth_tick_table[name]
-    end
+	local func_table = function_nth_tick_table[name]
+	if not func_table then
+		function_nth_tick_table[name] = {}
+		func_table = function_nth_tick_table[name]
+	end
 
-    func_table[#func_table + 1] = {tick = tick, handler = f}
+	func_table[#func_table + 1] = { tick = tick, handler = f }
 
-    if handlers_added then
-        core_on_nth_tick(tick, f)
-    end
+	if handlers_added then
+		core_on_nth_tick(tick, f)
+	end
 end
 
 --- Removes a handler for the nth tick.
@@ -452,134 +475,142 @@ end
 -- @param  tick<number>
 -- @param  func<function>
 function Event.remove_removable_nth_tick_function(tick, name)
-    if _LIFECYCLE == stage_load then
-        error('cannot call during on_load', 2)
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:450')
+	if _LIFECYCLE == stage_load then
+		error("cannot call during on_load", 2)
+	end
 
-    if not tick or not name then
-        return
-    end
+	if not tick or not name then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:456')
+		return
+	end
 
-    local funcs = function_nth_tick_handlers[name]
+	local funcs = function_nth_tick_handlers[name]
 
-    if not funcs then
-        return
-    end
+	if not funcs then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:462')
+		return
+	end
 
-    local handlers = on_nth_tick_event_handlers[tick]
-    local f = function_nth_tick_table[name]
+	local handlers = on_nth_tick_event_handlers[tick]
+	local f = function_nth_tick_table[name]
 
-    for k, v in pairs(function_nth_tick_table[name]) do
-        local t = v.tick
-        if t == tick then
-            f = v.handler
-        end
-    end
+	for k, v in pairs(function_nth_tick_table[name]) do
+		local t = v.tick
+		if t == tick then
+			f = v.handler
+		end
+	end
 
-    remove(handlers, f)
+	remove(handlers, f)
 
-    for k, v in pairs(function_nth_tick_handlers[name]) do
-        local t = v.tick
-        if t == tick then
-            function_nth_tick_handlers[name][k] = nil
-        end
-    end
+	for k, v in pairs(function_nth_tick_handlers[name]) do
+		local t = v.tick
+		if t == tick then
+			function_nth_tick_handlers[name][k] = nil
+		end
+	end
 
-    if #function_nth_tick_handlers[name] == 0 then
-        function_nth_tick_handlers[name] = nil
-    end
+	if #function_nth_tick_handlers[name] == 0 then
+		function_nth_tick_handlers[name] = nil
+	end
 
-    if #handlers == 0 then
-        script_on_nth_tick(tick, nil)
-    end
+	if #handlers == 0 then
+		script_on_nth_tick(tick, nil)
+	end
 end
 
 --- Generate a new, unique event ID.
 -- @param <string> name of the event/variable that is exposed
 function Event.generate_event_name(name)
-    local event_id = generate_event_name()
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:495')
+	local event_id = generate_event_name()
 
-    -- If we're in debug, add the event ID into defines.events for the debuggertron's event module
-    if _DEBUG then
-        defines.events[name] = event_id -- luacheck: ignore 122
-    end
+	-- If we're in debug, add the event ID into defines.events for the debuggertron's event module
+	if _DEBUG then
+		defines.events[name] = event_id -- luacheck: ignore 122
+	end
 
-    return event_id
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:503')
+	return event_id
 end
 
 function Event.on_configuration_changed(func)
-    if type(func) == 'function' then
-        script.on_configuration_changed(func)
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:506')
+	if type(func) == "function" then
+		script.on_configuration_changed(func)
+	end
 end
 
 function Event.add_event_filter(event, filter)
-    local current_filters = script.get_event_filter(event)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:512')
+	local current_filters = script.get_event_filter(event)
 
-    if not current_filters then
-        current_filters = {filter}
-    else
-        table.insert(current_filters, filter)
-    end
+	if not current_filters then
+		current_filters = { filter }
+	else
+		table.insert(current_filters, filter)
+	end
 
-    script.set_event_filter(event, current_filters)
+	script.set_event_filter(event, current_filters)
 end
 
 local function add_handlers()
-    if not function_table then
-        function_table = {}
-    end
-    if not function_nth_tick_table then
-        function_nth_tick_table = {}
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:524')
+	if not function_table then
+		function_table = {}
+	end
+	if not function_nth_tick_table then
+		function_nth_tick_table = {}
+	end
 
-    for event_name, tokens in pairs(token_handlers) do
-        for i = 1, #tokens do
-            local handler = Token.get(tokens[i])
-            core_add(event_name, handler)
-        end
-    end
+	for event_name, tokens in pairs(token_handlers) do
+		for i = 1, #tokens do
+			local handler = Token.get(tokens[i])
+			core_add(event_name, handler)
+		end
+	end
 
-    for name, funcs in pairs(function_handlers) do
-        for i = 1, #funcs do
-            local e_name = funcs[i].event_name
-            local func = funcs[i].handler
-            local handler = assert(load('return ' .. func))()
-            local func_handler = function_table[name]
-            if not func_handler then
-                function_table[name] = {}
-                func_handler = function_table[name]
-            end
+	for name, funcs in pairs(function_handlers) do
+		for i = 1, #funcs do
+			local e_name = funcs[i].event_name
+			local func = funcs[i].handler
+			local handler = assert(load("return " .. func))()
+			local func_handler = function_table[name]
+			if not func_handler then
+				function_table[name] = {}
+				func_handler = function_table[name]
+			end
 
-            func_handler[#func_handler + 1] = {event_name = e_name, handler = handler}
-            core_add(e_name, handler)
-        end
-    end
+			func_handler[#func_handler + 1] = { event_name = e_name, handler = handler }
+			core_add(e_name, handler)
+		end
+	end
 
-    for tick, tokens in pairs(token_nth_tick_handlers) do
-        for i = 1, #tokens do
-            local handler = Token.get(tokens[i])
-            core_on_nth_tick(tick, handler)
-        end
-    end
+	for tick, tokens in pairs(token_nth_tick_handlers) do
+		for i = 1, #tokens do
+			local handler = Token.get(tokens[i])
+			core_on_nth_tick(tick, handler)
+		end
+	end
 
-    for name, funcs in pairs(function_nth_tick_handlers) do
-        for i = 1, #funcs do
-            local tick = funcs[i].tick
-            local func = funcs[i].handler
-            local handler = assert(load('return ' .. func))()
-            local func_handler = function_nth_tick_table[name]
-            if not func_handler then
-                function_nth_tick_table[name] = {}
-                func_handler = function_nth_tick_table[name]
-            end
+	for name, funcs in pairs(function_nth_tick_handlers) do
+		for i = 1, #funcs do
+			local tick = funcs[i].tick
+			local func = funcs[i].handler
+			local handler = assert(load("return " .. func))()
+			local func_handler = function_nth_tick_table[name]
+			if not func_handler then
+				function_nth_tick_table[name] = {}
+				func_handler = function_nth_tick_table[name]
+			end
 
-            func_handler[#func_handler + 1] = {tick = tick, handler = handler}
-            core_on_nth_tick(tick, handler)
-        end
-    end
+			func_handler[#func_handler + 1] = { tick = tick, handler = handler }
+			core_on_nth_tick(tick, handler)
+		end
+	end
 
-    handlers_added = true
+	handlers_added = true
 end
 
 core_on_init(add_handlers)
@@ -587,4 +618,5 @@ core_on_load(add_handlers)
 function_table = {}
 function_nth_tick_table = {}
 
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/event.lua:586')
 return Event

@@ -10,13 +10,14 @@ local math_random = math.random
 local math_floor = math.floor
 
 local function get_raffle_table(level, name)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:11')
 	local raffle = {
-		["small-" .. name] = 1000 - level * 1.75,		
+		["small-" .. name] = 1000 - level * 1.75,
 		["medium-" .. name] = -250 + level * 1.5,
-		["big-" .. name] = 0,		
+		["big-" .. name] = 0,
 		["behemoth-" .. name] = 0,
 	}
-	
+
 	if level > 500 then
 		raffle["medium-" .. name] = 500 - (level - 500)
 		raffle["big-" .. name] = (level - 500) * 2
@@ -25,41 +26,53 @@ local function get_raffle_table(level, name)
 		raffle["behemoth-" .. name] = (level - 900) * 3
 	end
 	for k, v in pairs(raffle) do
-		if raffle[k] < 0 then raffle[k] = 0 end
+		if raffle[k] < 0 then
+			raffle[k] = 0
+		end
 	end
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:31')
 	return raffle
 end
 
 local function roll(evolution_factor, name)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:34')
 	local raffle = get_raffle_table(math_floor(evolution_factor * 1000), name)
 	local max_chance = 0
 	for k, v in pairs(raffle) do
 		max_chance = max_chance + v
 	end
-	local r = math_random(0, math_floor(max_chance))	
+	local r = math_random(0, math_floor(max_chance))
 	local current_chance = 0
 	for k, v in pairs(raffle) do
 		current_chance = current_chance + v
-		if r <= current_chance then return k end
+		if r <= current_chance then
+			log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:45')
+			return k
+		end
 	end
 end
 
 local function get_biter_name(evolution_factor)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:50')
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:51')
 	return roll(evolution_factor, "biter")
 end
 
-local function get_spitter_name(evolution_factor)	
-	return roll(evolution_factor, "spitter")	
+local function get_spitter_name(evolution_factor)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:54')
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:55')
+	return roll(evolution_factor, "spitter")
 end
 
 local function get_worm_raffle_table(level)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:58')
 	local raffle = {
-		["small-worm-turret"] = 1000 - level * 1.75,		
-		["medium-worm-turret"] = level,		
-		["big-worm-turret"] = 0,		
+		["small-worm-turret"] = 1000 - level * 1.75,
+		["medium-worm-turret"] = level,
+		["big-worm-turret"] = 0,
 		["behemoth-worm-turret"] = 0,
 	}
-	
+
 	if level > 500 then
 		raffle["medium-worm-turret"] = 500 - (level - 500)
 		raffle["big-worm-turret"] = (level - 500) * 2
@@ -68,29 +81,39 @@ local function get_worm_raffle_table(level)
 		raffle["behemoth-worm-turret"] = (level - 900) * 3
 	end
 	for k, v in pairs(raffle) do
-		if raffle[k] < 0 then raffle[k] = 0 end
+		if raffle[k] < 0 then
+			raffle[k] = 0
+		end
 	end
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:78')
 	return raffle
 end
 
 local function get_worm_name(evolution_factor)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:81')
 	local raffle = get_worm_raffle_table(math_floor(evolution_factor * 1000))
 	local max_chance = 0
 	for k, v in pairs(raffle) do
 		max_chance = max_chance + v
 	end
-	local r = math_random(0, math_floor(max_chance))	
+	local r = math_random(0, math_floor(max_chance))
 	local current_chance = 0
 	for k, v in pairs(raffle) do
 		current_chance = current_chance + v
-		if r <= current_chance then return k end
+		if r <= current_chance then
+			log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:92')
+			return k
+		end
 	end
 end
 
 local function get_unit_name(evolution_factor)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:97')
 	if math_random(1, 3) == 1 then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:99')
 		return get_spitter_name(evolution_factor)
 	else
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:101')
 		return get_biter_name(evolution_factor)
 	end
 end
@@ -103,11 +126,22 @@ local type_functions = {
 }
 
 function Public.roll(entity_type, evolution_factor)
-	if not entity_type then return end
-	if not type_functions[entity_type] then return end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:112')
+	if not entity_type then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:114')
+		return
+	end
+	if not type_functions[entity_type] then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:117')
+		return
+	end
 	local evo = evolution_factor
-	if not evo then evo = game.forces.enemy.evolution_factor end
+	if not evo then
+		evo = game.forces.enemy.evolution_factor
+	end
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:123')
 	return type_functions[entity_type](evo)
 end
 
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/functions/biter_raffle.lua:126')
 return Public

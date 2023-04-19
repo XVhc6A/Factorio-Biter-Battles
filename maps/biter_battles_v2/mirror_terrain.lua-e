@@ -17,6 +17,7 @@ local direction_translation = {
 }
 
 local function clear_entities(surface, bb)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/mirror_terrain.lua:18')
 	objects = surface.find_entities_filtered {
 		area = bb,
 		name = 'character',
@@ -29,6 +30,7 @@ local function clear_entities(surface, bb)
 end
 
 function Public.clone(event)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/mirror_terrain.lua:30')
 	local surface = event.surface
 	local source_bb = event.area
 	local destination_bb = table.deepcopy(source_bb)
@@ -66,12 +68,14 @@ function Public.clone(event)
 end
 
 function Public.invert_entity(event)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/mirror_terrain.lua:67')
 	local source = event.source
 	local destination = event.destination
 
 	-- Don't allow soulless characters to be cloned on spawn platform.
 	if destination.name == "character" then
 		destination.destroy()
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/mirror_terrain.lua:74')
 		return
 	end
 
@@ -102,6 +106,7 @@ function Public.invert_entity(event)
 	-- Check if there are no overlaps.
 	if src_pos.x == dest_pos.x and src_pos.y == dest_pos.y then
 		destination.destroy()
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/mirror_terrain.lua:104')
 		return
 	end
 
@@ -111,6 +116,7 @@ function Public.invert_entity(event)
 end
 
 function Public.remove_hidden_tiles(event)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/mirror_terrain.lua:112')
 	local bb = event.destination_area
 	local surface = event.destination_surface
 	local to_remove = surface.find_tiles_filtered {
@@ -129,6 +135,7 @@ function Public.remove_hidden_tiles(event)
 end
 
 function Public.invert_tiles(event)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/mirror_terrain.lua:130')
 	local surface = event.destination_surface
 	local to_emplace = surface.find_tiles_filtered {
 		area = event.source_area
@@ -153,6 +160,7 @@ end
 
 
 function Public.invert_decoratives(event)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/mirror_terrain.lua:154')
 	local surface = event.destination_surface
 	local src_decoratives = surface.find_decoratives_filtered {
 		area = event.source_area
@@ -172,4 +180,5 @@ function Public.invert_decoratives(event)
 	surface.create_decoratives{check_collision = false, decoratives = dest_decoratives}
 end
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/mirror_terrain.lua:174')
 return Public

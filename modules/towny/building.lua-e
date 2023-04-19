@@ -52,110 +52,158 @@ local entity_type_whitelist = {
 }
 
 local function is_position_isolated(surface, force, position)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:53')
 	local position_x = position.x
 	local position_y = position.y
-	local area = {{position_x - connection_radius, position_y - connection_radius}, {position_x + connection_radius, position_y + connection_radius}}
+	local area = {
+		{ position_x - connection_radius, position_y - connection_radius },
+		{ position_x + connection_radius, position_y + connection_radius },
+	}
 	local count = 0
-	
-	for _, e in pairs(surface.find_entities_filtered({area = area, force = force.name})) do
+
+	for _, e in pairs(surface.find_entities_filtered({ area = area, force = force.name })) do
 		if entity_type_whitelist[e.type] then
 			count = count + 1
-			if count > 1 then return end
+			if count > 1 then
+				log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:66')
+				return
+			end
 		end
 	end
-	
+
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:71')
 	return true
 end
 
 local function refund_item(event, item_name)
-	if event.player_index then 
-		game.players[event.player_index].insert({name = item_name, count = 1})
-		return 
-	end	
-	
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:74')
+	if event.player_index then
+		game.players[event.player_index].insert({ name = item_name, count = 1 })
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:77')
+		return
+	end
+
 	if event.robot then
 		local inventory = event.robot.get_inventory(defines.inventory.robot_cargo)
-		inventory.insert({name = item_name, count = 1})
+		inventory.insert({ name = item_name, count = 1 })
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:83')
 		return
 	end
 end
 
 local function error_floaty(surface, position, msg)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:87')
 	surface.create_entity({
 		name = "flying-text",
 		position = position,
 		text = msg,
-		color = {r=0.77, g=0.0, b=0.0}
+		color = { r = 0.77, g = 0.0, b = 0.0 },
 	})
 end
 
 local function is_town_market_nearby(entity)
-	local area = {{entity.position.x - 48, entity.position.y - 48}, {entity.position.x + 48, entity.position.y + 48}}
-	local markets = entity.surface.find_entities_filtered({name = "market", area = area})
-	if not markets[1] then return false end
-	for _, market in pairs(markets) do
-		if market.force.index > 3 then return true end
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:96')
+	local area =
+		{ { entity.position.x - 48, entity.position.y - 48 }, { entity.position.x + 48, entity.position.y + 48 } }
+	local markets = entity.surface.find_entities_filtered({ name = "market", area = area })
+	if not markets[1] then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:101')
+		return false
 	end
+	for _, market in pairs(markets) do
+		if market.force.index > 3 then
+			log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:105')
+			return true
+		end
+	end
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:108')
 	return false
 end
 
 function Public.prevent_isolation(event)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:111')
 	local entity = event.created_entity
-	if not entity.valid then return end
-	if entity.force.index == 1 then return end
-	if not entity_type_whitelist[entity.type] then return end
+	if not entity.valid then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:114')
+		return
+	end
+	if entity.force.index == 1 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:117')
+		return
+	end
+	if not entity_type_whitelist[entity.type] then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:120')
+		return
+	end
 	local surface = event.created_entity.surface
-	
+
 	if is_position_isolated(surface, entity.force, entity.position) then
 		error_floaty(surface, entity.position, "Building is not connected to town!")
-		refund_item(event, event.stack.name)	
+		refund_item(event, event.stack.name)
 		entity.destroy()
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:128')
 		return true
-	end	
+	end
 end
 
 function Public.prevent_isolation_landfill(event)
-	if event.item.name ~= "landfill" then return end
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:132')
+	if event.item.name ~= "landfill" then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:134')
+		return
+	end
 	local surface = game.surfaces[event.surface_index]
 	local tiles = event.tiles
-	
+
 	local force
 	if event.player_index then
 		force = game.players[event.player_index].force
 	else
 		force = event.robot.force
 	end
-	
+
 	for _, placed_tile in pairs(tiles) do
 		local position = placed_tile.position
 		if is_position_isolated(surface, force, position) then
 			error_floaty(surface, position, "Tile is not connected to town!")
-			surface.set_tiles({{name = "water", position = position}}, true)			
-			refund_item(event, "landfill")		
+			surface.set_tiles({ { name = "water", position = position } }, true)
+			refund_item(event, "landfill")
 		end
-	end	
+	end
 end
 
 local square_min_distance_to_spawn = 80 ^ 2
 
 function Public.restrictions(event)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:158')
 	local entity = event.created_entity
-	if not entity.valid then return end
-	
+	if not entity.valid then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:161')
+		return
+	end
+
 	if entity.force.index == 1 then
 		if is_town_market_nearby(entity) then
 			refund_item(event, event.stack.name)
 			error_floaty(entity.surface, entity.position, "Building too close to a town center!")
 			entity.destroy()
-		end	
-		return 
+		end
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:170')
+		return
 	end
-	
-	if not entity_type_whitelist[entity.type] then return end
-	if entity.position.x ^ 2 + entity.position.y ^ 2 > square_min_distance_to_spawn then return end
+
+	if not entity_type_whitelist[entity.type] then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:174')
+		return
+	end
+	if entity.position.x ^ 2 + entity.position.y ^ 2 > square_min_distance_to_spawn then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:177')
+		return
+	end
 	refund_item(event, event.stack.name)
 	error_floaty(entity.surface, entity.position, "Building too close to spawn!")
 	entity.destroy()
 end
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/towny/building.lua:184')
 return Public

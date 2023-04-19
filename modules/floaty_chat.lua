@@ -1,51 +1,66 @@
-local event = require 'utils.event'
-local Muted = require 'utils.muted'
-
+local event = require("utils.event")
+local Muted = require("utils.muted")
 
 local function on_console_chat(event)
-	if not event.message or not event.player_index then return end		
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/floaty_chat.lua:3')
+	if not event.message or not event.player_index then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/floaty_chat.lua:5')
+		return
+	end
 	local player = game.players[event.player_index]
-	if not player.character then return end
+	if not player.character then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/floaty_chat.lua:9')
+		return
+	end
 
-	if Muted and Muted.is_muted(player.name) then return end
+	if Muted and Muted.is_muted(player.name) then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/floaty_chat.lua:13')
+		return
+	end
 
 	local y_offset = -4
-	if package.loaded['modules.rpg'] then y_offset = -4.5 end
-	
+	if package.loaded["modules.rpg"] then
+		y_offset = -4.5
+	end
+
 	if global.player_floaty_chat[player.index] then
 		rendering.destroy(global.player_floaty_chat[player.index])
 		global.player_floaty_chat[player.index] = nil
 	end
-	
+
 	local players = {}
 	for _, p in pairs(game.connected_players) do
 		if player.force.index == p.force.index then
 			players[#players + 1] = p
 		end
 	end
-	if #players == 0 then return end
-	
-	global.player_floaty_chat[player.index] = rendering.draw_text{
+	if #players == 0 then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/floaty_chat.lua:33')
+		return
+	end
+
+	global.player_floaty_chat[player.index] = rendering.draw_text({
 		text = event.message,
 		surface = player.surface,
 		target = player.character,
-		target_offset = {-0.05, y_offset},
+		target_offset = { -0.05, y_offset },
 		color = {
 			r = player.color.r * 0.6 + 0.25,
 			g = player.color.g * 0.6 + 0.25,
 			b = player.color.b * 0.6 + 0.25,
-			a = 1
+			a = 1,
 		},
 		players = players,
 		time_to_live = 600,
 		scale = 1.50,
 		font = "default-game",
 		alignment = "center",
-		scale_with_zoom = false
-	}
+		scale_with_zoom = false,
+	})
 end
 
 local function on_init(event)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/floaty_chat.lua:56')
 	global.player_floaty_chat = {}
 end
 

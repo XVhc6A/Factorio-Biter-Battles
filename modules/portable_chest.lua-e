@@ -44,12 +44,16 @@ Global.register(
 )
 
 function Public.get_table()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:45')
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:46')
     return this
 end
 
 local function clear_gui(player)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:49')
     local data = this.inf_gui[player.index]
     if not data then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:52')
         return
     end
     if data.frame and data.frame.valid then
@@ -63,6 +67,7 @@ local function clear_gui(player)
 end
 
 local function create_button(player)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:64')
     mod(player).add(
         {
             type = 'sprite-button',
@@ -75,25 +80,33 @@ local function create_button(player)
 end
 
 local function validate_player(player)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:76')
     if not player then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:78')
         return false
     end
     if not player.valid then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:81')
         return false
     end
     if not player.character then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:84')
         return false
     end
     if not player.connected then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:87')
         return false
     end
     if not game.players[player.index] then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:90')
         return false
     end
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:92')
     return true
 end
 
 local function item(item_name, item_count, player, storage)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:95')
     local stack_size = this.stack_size[player.index]
     local item_stack
     if stack_size then
@@ -127,6 +140,7 @@ local function item(item_name, item_count, player, storage)
 end
 
 local function update_chest()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:128')
     for chest_id, player in pairs(this.inf_chests) do
         if not player.valid then
             goto continue
@@ -159,8 +173,10 @@ local function update_chest()
 end
 
 local function draw_main_frame(player, target, chest_id)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:160')
     chest_id = chest_id or this.player_chests[player.index].chest_id
     if not chest_id then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:163')
         return
     end
     local p = target or player
@@ -258,6 +274,7 @@ local function draw_main_frame(player, target, chest_id)
 end
 
 local function update_gui()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:259')
     for _, player in pairs(game.connected_players) do
         local chest_gui_data = this.inf_gui[player.index]
         if not chest_gui_data then
@@ -337,23 +354,29 @@ local function update_gui()
 end
 
 local function gui_click(event)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:338')
     local element = event.element
     local player = game.get_player(event.player_index)
     if not validate_player(player) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:342')
         return
     end
     if not element.valid then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:345')
         return
     end
     local parent = element.parent
     if not parent then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:349')
         return
     end
     if parent.name ~= 'personal_inventory' then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:352')
         return
     end
     local chest_id = this.player_chests[player.index].chest_id
     if not chest_id then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:356')
         return
     end
 
@@ -368,17 +391,20 @@ local function gui_click(event)
     local delete_mode = this.inf_gui[player.index].delete_mode
 
     if not storage then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:370')
         return
     end
 
     if delete_mode then
         storage[name] = nil
         this.inf_gui[player.index].updated = false
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:376')
         return
     end
 
     if this.editor[player.index] then
         if not storage[name] then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:381')
             return
         end
         if ctrl then
@@ -406,10 +432,12 @@ local function gui_click(event)
     if ctrl then
         local count = storage[name]
         if not count then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:408')
             return
         end
         local inserted = player.insert {name = name, count = count}
         if not inserted then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:412')
             return
         end
         if inserted == count then
@@ -424,9 +452,11 @@ local function gui_click(event)
         local count = storage[name]
         local stack = game.item_prototypes[name].stack_size
         if not count then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:426')
             return
         end
         if not stack then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:429')
             return
         end
         if count > stack then
@@ -445,6 +475,7 @@ local function gui_click(event)
 end
 
 local function gui_closed(event)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:446')
     local player = game.get_player(event.player_index)
     local type = event.gui_type
 
@@ -454,25 +485,31 @@ local function gui_closed(event)
 end
 
 local function on_gui_elem_changed(event)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:455')
     local element = event.element
     local player = game.get_player(event.player_index)
     if not validate_player(player) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:459')
         return
     end
 
     if not element.valid then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:463')
         return
     end
     local parent = element.parent
     if not parent then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:467')
         return
     end
     if parent.name ~= 'personal_inventory' then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:470')
         return
     end
 
     local chest_id = this.player_chests[player.index].chest_id
     if not chest_id then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:475')
         return
     end
     local storage = this.inf_storage[chest_id]
@@ -483,6 +520,7 @@ local function on_gui_elem_changed(event)
     local name = element.elem_value
 
     if not name then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:485')
         return
     end
 
@@ -513,8 +551,10 @@ local function on_gui_elem_changed(event)
 end
 
 local function on_player_joined_game(event)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:514')
     local player = game.get_player(event.player_index)
     if not (player and player.valid) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:517')
         return
     end
     local chest_id = Gui.uid()
@@ -544,14 +584,17 @@ local function on_player_joined_game(event)
 end
 
 local function tick()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:545')
     update_chest()
     update_gui()
 end
 
 local function on_pre_player_left_game(event)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:550')
     local player = game.get_player(event.player_index)
 
     if not player or not player.valid then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:554')
         return
     end
 
@@ -559,9 +602,11 @@ local function on_pre_player_left_game(event)
 end
 
 local function on_player_died(event)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:560')
     local player = game.get_player(event.player_index)
 
     if not player or not player.valid then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:564')
         return
     end
 
@@ -573,6 +618,7 @@ Gui.on_click(
     function(event)
         local player = game.get_player(event.player_index)
         if not player or not player.valid or not player.character then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:575')
             return
         end
 
@@ -595,11 +641,13 @@ Gui.on_value_changed(
         local data = Gui.get_data(element)
         local stack_value = data.stack_value
         if not stack_value or not stack_value.valid then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:597')
             return
         end
 
         local slider = data.slider
         if not slider or not slider.valid then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:602')
             return
         end
 
@@ -622,6 +670,7 @@ Gui.on_checked_state_changed(
         local data = Gui.get_data(element)
         local checkbox = data.checkbox
         if not checkbox or not checkbox.valid then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:624')
             return
         end
 
@@ -641,25 +690,30 @@ commands.add_command(
         local player = game.player
 
         if not validate_player(player) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:643')
             return
         end
 
         if not cmd.parameter then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:647')
             return
         end
         local target_player = game.players[cmd.parameter]
 
         if target_player == player then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:652')
             return player.print('Cannot open self.', Color.warning)
         end
 
         if target_player.admin then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:656')
             return
         end
 
         if target_player and target_player.valid then
             local chest_id = this.player_chests[target_player.index].chest_id
             if not chest_id then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:662')
                 return
             end
             draw_main_frame(player, target_player, chest_id)
@@ -670,20 +724,24 @@ commands.add_command(
 )
 
 function Public.ores_only(value)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:671')
     if value then
         this.ores_only = value
     else
         this.ores_only = false
     end
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:677')
     return this.ores_only
 end
 
 function Public.allow_barrels(value)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:680')
     if value then
         this.allow_barrels = value
     else
         this.allow_barrels = false
     end
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:686')
     return this.allow_barrels
 end
 
@@ -695,4 +753,5 @@ Event.add(defines.events.on_gui_elem_changed, on_gui_elem_changed)
 Event.add(defines.events.on_pre_player_left_game, on_pre_player_left_game)
 Event.add(defines.events.on_player_died, on_player_died)
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/portable_chest.lua:697')
 return Public

@@ -12,12 +12,18 @@ local entity_types = {
 	["unit-spawner"] = true,
 }
 
-if package.loaded['maps.biter_hatchery.terrain'] then entity_types["unit-spawner"] = nil end
+if package.loaded["maps.biter_hatchery.terrain"] then
+	entity_types["unit-spawner"] = nil
+end
 
 local function clean_table()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:18')
 	--Perform a table cleanup every 1000 boosts
 	global.biter_health_boost_count = global.biter_health_boost_count + 1
-	if global.biter_health_boost_count % 1000 ~= 0 then return end
+	if global.biter_health_boost_count % 1000 ~= 0 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:22')
+		return
+	end
 
 	local units_to_delete = {}
 
@@ -28,11 +34,13 @@ local function clean_table()
 
 	--Remove valid health boost entries from deletion
 	local validtypes = {}
-	for k,v in pairs(entity_types) do
-		if v then table.insert(validtypes, k) end
+	for k, v in pairs(entity_types) do
+		if v then
+			table.insert(validtypes, k)
+		end
 	end
 	for _, surface in pairs(game.surfaces) do
-		for _, unit in pairs(surface.find_entities_filtered({type = validtypes})) do
+		for _, unit in pairs(surface.find_entities_filtered({ type = validtypes })) do
 			units_to_delete[unit.unit_number] = nil
 		end
 	end
@@ -44,23 +52,33 @@ local function clean_table()
 end
 
 local function create_boss_healthbar(entity, size)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:51')
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:52')
 	return rendering.draw_sprite({
-		sprite="virtual-signal/signal-white",
-		tint={0, 200, 0},
-		x_scale=size * 15, y_scale=size, render_layer="light-effect",
-		target=entity, target_offset={0, -2.5}, surface=entity.surface,
+		sprite = "virtual-signal/signal-white",
+		tint = { 0, 200, 0 },
+		x_scale = size * 15,
+		y_scale = size,
+		render_layer = "light-effect",
+		target = entity,
+		target_offset = { 0, -2.5 },
+		surface = entity.surface,
 	})
 end
 
 local function set_boss_healthbar(health, max_health, healthbar_id)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:64')
 	local m = health / max_health
 	local x_scale = rendering.get_y_scale(healthbar_id) * 15
 	rendering.set_x_scale(healthbar_id, x_scale * m)
-	rendering.set_color(healthbar_id, {math_floor(255 - 255 * m), math_floor(200 * m), 0})
+	rendering.set_color(healthbar_id, { math_floor(255 - 255 * m), math_floor(200 * m), 0 })
 end
 
 function Public.add_unit(unit, health_multiplier)
-	if not health_multiplier then health_multiplier = global.biter_health_boost end
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:71')
+	if not health_multiplier then
+		health_multiplier = global.biter_health_boost
+	end
 	global.biter_health_boost_units[unit.unit_number] = {
 		math_floor(unit.prototype.max_health * health_multiplier),
 		math_round(1 / health_multiplier, 5),
@@ -69,22 +87,34 @@ function Public.add_unit(unit, health_multiplier)
 end
 
 function Public.add_boss_unit(unit, health_multiplier, health_bar_size)
-	if not health_multiplier then health_multiplier = global.biter_health_boost end
-	if not health_bar_size then health_bar_size = 0.5 end
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:82')
+	if not health_multiplier then
+		health_multiplier = global.biter_health_boost
+	end
+	if not health_bar_size then
+		health_bar_size = 0.5
+	end
 	local health = math_floor(unit.prototype.max_health * health_multiplier)
 	global.biter_health_boost_units[unit.unit_number] = {
 		health,
 		math_round(1 / health_multiplier, 5),
-		{max_health = health, healthbar_id = create_boss_healthbar(unit, health_bar_size), last_update = game.tick},
+		{ max_health = health, healthbar_id = create_boss_healthbar(unit, health_bar_size), last_update = game.tick },
 	}
 	clean_table()
 end
 
 local function on_entity_damaged(event)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:98')
 	local biter = event.entity
-	if not (biter and biter.valid) then return end
-	if not entity_types[biter.type] then return end
-	
+	if not (biter and biter.valid) then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:101')
+		return
+	end
+	if not entity_types[biter.type] then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:104')
+		return
+	end
+
 	local biter_health_boost_units = global.biter_health_boost_units
 
 	local unit_number = biter.unit_number
@@ -111,16 +141,20 @@ local function on_entity_damaged(event)
 
 	--Reduce health pool
 	health_pool[1] = health_pool[1] - event.final_damage_amount
-	
+
 	--Set entity health relative to health pool
 	biter.health = health_pool[1] * health_pool[2]
 
 	--Proceed to kill entity if health is 0
-	if biter.health > 0 then return end
+	if biter.health > 0 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:139')
+		return
+	end
 
 	if event.cause then
 		if event.cause.valid then
 			event.entity.die(event.cause.force, event.cause)
+			log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:145')
 			return
 		end
 	end
@@ -128,14 +162,16 @@ local function on_entity_damaged(event)
 end
 
 local function on_init()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:151')
 	global.biter_health_boost = 1
 	global.biter_health_boost_forces = {}
 	global.biter_health_boost_units = {}
 	global.biter_health_boost_count = 0
 end
 
-local event = require 'utils.event'
+local event = require("utils.event")
 event.on_init(on_init)
 event.add(defines.events.on_entity_damaged, on_entity_damaged)
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/biter_health_booster.lua:162')
 return Public

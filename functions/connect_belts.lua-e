@@ -6,62 +6,68 @@ local direction_translation = {
 }
 
 local direction_tendencies = {
-	[1] = {0, 2, 4, 6},
-	[2] = {2, 4, 6, 0},
-	[3] = {4, 6, 0, 2},
-	[4] = {6, 0, 2, 4},
+	[1] = { 0, 2, 4, 6 },
+	[2] = { 2, 4, 6, 0 },
+	[3] = { 4, 6, 0, 2 },
+	[4] = { 6, 0, 2, 4 },
 }
 
 local function get_optimal_direction(entity, direction_tendency)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/functions/connect_belts.lua:14')
 	local original_direction = entity.direction
 	local optimal_direction = entity.direction
 	local max_connection_count = #entity.belt_neighbours["inputs"] + #entity.belt_neighbours["outputs"]
 	local original_count = #entity.belt_neighbours["inputs"] + #entity.belt_neighbours["outputs"]
-	
+
 	for _, d in pairs(direction_tendency) do
 		entity.direction = d
 		local count = #entity.belt_neighbours["inputs"] + #entity.belt_neighbours["outputs"]
 		--if #entity.belt_neighbours["inputs"] > 0 and #entity.belt_neighbours["outputs"] > 0 then
 		--	optimal_direction = d
 		--	break
-		--end	
+		--end
 		if count > max_connection_count then
 			max_connection_count = count
 			optimal_direction = d
-		end		
+		end
 	end
-	
-	if max_connection_count == 1 then	
+
+	if max_connection_count == 1 then
 		for _, d in pairs(direction_tendency) do
-			entity.direction = d		
+			entity.direction = d
 			if #entity.belt_neighbours["inputs"] > 0 then
 				if d == entity.belt_neighbours["inputs"][1].direction then
-					optimal_direction = d					
+					optimal_direction = d
 					break
 				end
-			end		
+			end
 			if #entity.belt_neighbours["outputs"] > 0 then
 				if d == entity.belt_neighbours["outputs"][1].direction then
 					optimal_direction = d
 					break
 				end
 			end
-		end		
+		end
 	end
-		
+
 	entity.direction = original_direction
-	
+
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/functions/connect_belts.lua:53')
 	return optimal_direction
 end
 
 function connect_belts(entities, d)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/functions/connect_belts.lua:56')
 	for a = 1, 4, 1 do
 		local r = d
-		if not r then r = math.random(1, 4) end
+		if not r then
+			r = math.random(1, 4)
+		end
 		for k, entity in pairs(entities) do
 			entity.direction = get_optimal_direction(entity, direction_tendencies[r])
 		end
 	end
 end
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/functions/connect_belts.lua:68')
 return connect_belts

@@ -24,9 +24,18 @@ The town center also acts as the team's respawn point.
 There are very little rules. Have fun and be comfy ^.^]]
 
 function Public.toggle_button(player)
-	if player.gui.top["towny_map_intro_button"] then return end
-	local b = player.gui.top.add({type = "sprite-button", caption = "Towny", name = "towny_map_intro_button", tooltip = "Show Info"})
-	b.style.font_color = {r=0.5, g=0.3, b=0.99}
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/towny/info.lua:25')
+	if player.gui.top["towny_map_intro_button"] then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/towny/info.lua:27')
+		return
+	end
+	local b = player.gui.top.add({
+		type = "sprite-button",
+		caption = "Towny",
+		name = "towny_map_intro_button",
+		tooltip = "Show Info",
+	})
+	b.style.font_color = { r = 0.5, g = 0.3, b = 0.99 }
 	b.style.font = "heading-1"
 	b.style.minimal_height = 38
 	b.style.minimal_width = 60
@@ -37,67 +46,92 @@ function Public.toggle_button(player)
 end
 
 function Public.show(player)
-	if player.gui.center["towny_map_intro_frame"] then player.gui.center["towny_map_intro_frame"].destroy() end
-	local frame = player.gui.center.add {type = "frame", name = "towny_map_intro_frame"}
-	local frame = frame.add {type = "frame", direction = "vertical"}
-	
-	local t = frame.add {type = "table", column_count = 2}
-	
-	local label = t.add {type = "label", caption = "Active Factions:"}
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/towny/info.lua:45')
+	if player.gui.center["towny_map_intro_frame"] then
+		player.gui.center["towny_map_intro_frame"].destroy()
+	end
+	local frame = player.gui.center.add({ type = "frame", name = "towny_map_intro_frame" })
+	local frame = frame.add({ type = "frame", direction = "vertical" })
+
+	local t = frame.add({ type = "table", column_count = 2 })
+
+	local label = t.add({ type = "label", caption = "Active Factions:" })
 	label.style.font = "heading-1"
-	label.style.font_color = {r=0.85, g=0.85, b=0.85}
+	label.style.font_color = { r = 0.85, g = 0.85, b = 0.85 }
 	label.style.right_padding = 8
-	
-	local t = t.add {type = "table", column_count = 4}
-		
-	local label = t.add {type = "label", caption = "Outlander" .. "(" .. #game.forces.player.connected_players .. ")"}
-	label.style.font_color = {170, 170, 170}
+
+	local t = t.add({ type = "table", column_count = 4 })
+
+	local label =
+		t.add({ type = "label", caption = "Outlander" .. "(" .. #game.forces.player.connected_players .. ")" })
+	label.style.font_color = { 170, 170, 170 }
 	label.style.font = "heading-3"
 	label.style.minimal_width = 80
-	
+
 	for _, town_center in pairs(global.towny.town_centers) do
 		local force = town_center.market.force
-		local label = t.add {type = "label", caption = force.name .. "(" .. #force.connected_players .. ")"}
+		local label = t.add({ type = "label", caption = force.name .. "(" .. #force.connected_players .. ")" })
 		label.style.font = "heading-3"
 		label.style.minimal_width = 80
 		label.style.font_color = town_center.color
-	end	
-	
-	frame.add {type = "line"}
-	
-	local l = frame.add {type = "label", caption = "Instructions:"}
+	end
+
+	frame.add({ type = "line" })
+
+	local l = frame.add({ type = "label", caption = "Instructions:" })
 	l.style.font = "heading-1"
-	l.style.font_color = {r=0.85, g=0.85, b=0.85}
-	
-	local l = frame.add {type = "label", caption = info}
+	l.style.font_color = { r = 0.85, g = 0.85, b = 0.85 }
+
+	local l = frame.add({ type = "label", caption = info })
 	l.style.single_line = false
 	l.style.font = "heading-2"
-	l.style.font_color = {r=0.8, g=0.7, b=0.99}	
+	l.style.font_color = { r = 0.8, g = 0.7, b = 0.99 }
 end
 
 function Public.close(event)
-	if not event.element then return end
-	if not event.element.valid then return end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/towny/info.lua:87')
+	if not event.element then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/towny/info.lua:89')
+		return
+	end
+	if not event.element.valid then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/towny/info.lua:92')
+		return
+	end
 	local parent = event.element.parent
 	for _ = 1, 4, 1 do
-		if not parent then return end
-		if parent.name == "towny_map_intro_frame" then parent.destroy() return end	
-		parent = parent.parent		
+		if not parent then
+			log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/towny/info.lua:97')
+			return
+		end
+		if parent.name == "towny_map_intro_frame" then
+			parent.destroy()
+			log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/towny/info.lua:101')
+			return
+		end
+		parent = parent.parent
 	end
 end
 
 function Public.toggle(event)
-	if not event.element then return end
-	if not event.element.valid then return end		
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/towny/info.lua:107')
+	if not event.element then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/towny/info.lua:109')
+		return
+	end
+	if not event.element.valid then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/towny/info.lua:112')
+		return
+	end
 	if event.element.name == "towny_map_intro_button" then
 		local player = game.players[event.player_index]
 		if player.gui.center["towny_map_intro_frame"] then
 			player.gui.center["towny_map_intro_frame"].destroy()
 		else
 			Public.show(player)
-		end		
-	end	
+		end
+	end
 end
 
-
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/towny/info.lua:124')
 return Public

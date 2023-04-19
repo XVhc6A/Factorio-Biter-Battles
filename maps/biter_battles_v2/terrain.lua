@@ -52,15 +52,18 @@ local loot_blacklist = {
 }
 
 local function shuffle(tbl)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:53')
 	local size = #tbl
 		for i = size, 1, -1 do
 			local rand = math_random(size)
 			tbl[i], tbl[rand] = tbl[rand], tbl[i]
 		end
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:59')
 	return tbl
 end
 
 local function get_noise(name, pos)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:62')
 	local seed = game.surfaces[global.bb_surface_name].map_gen_settings.seed
 	local noise_seed_add = 25000
 	if name == 1 then
@@ -69,6 +72,7 @@ local function get_noise(name, pos)
 		noise = noise + simplex_noise(pos.x * 0.031, pos.y * 0.031, seed) * 0.08
 		seed  = seed + noise_seed_add
 		noise = noise + simplex_noise(pos.x * 0.1, pos.y * 0.1, seed) * 0.025
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:71')
 		return noise
 	end
 
@@ -76,6 +80,7 @@ local function get_noise(name, pos)
 		local noise = simplex_noise(pos.x * 0.011, pos.y * 0.011, seed)
 		seed = seed + noise_seed_add
 		noise = noise + simplex_noise(pos.x * 0.08, pos.y * 0.08, seed) * 0.2
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:78')
 		return noise
 	end
 
@@ -83,11 +88,13 @@ local function get_noise(name, pos)
 		local noise = simplex_noise(pos.x * 0.005, pos.y * 0.005, seed)
 		noise = noise + simplex_noise(pos.x * 0.02, pos.y * 0.02, seed) * 0.3
 		noise = noise + simplex_noise(pos.x * 0.15, pos.y * 0.15, seed) * 0.025
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:85')
 		return noise
 	end
 end
 
 local function create_mirrored_tile_chain(surface, tile, count, straightness)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:89')
 	if not surface then return end
 	if not tile then return end
 	if not count then return end
@@ -124,6 +131,7 @@ local function create_mirrored_tile_chain(surface, tile, count, straightness)
 end
 
 local function get_replacement_tile(surface, position)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:125')
 	for i = 1, 128, 1 do
 		local vectors = {{0, i}, {0, i * -1}, {i, 0}, {i * -1, 0}}
 		table.shuffle_table(vectors)
@@ -131,15 +139,18 @@ local function get_replacement_tile(surface, position)
 			local tile = surface.get_tile(position.x + v[1], position.y + v[2])
 			if not tile.collides_with("resource-layer") then
 				if tile.name ~= "stone-path" then
+					log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:133')
 					return tile.name
 				end
 			end
 		end
 	end
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:138')
 	return "grass-1"
 end
 
 local function draw_noise_ore_patch(position, name, surface, radius, richness)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:141')
 	if not position then return end
 	if not name then return end
 	if not surface then return end
@@ -169,9 +180,11 @@ local function draw_noise_ore_patch(position, name, surface, radius, richness)
 end
 
 function is_within_spawn_circle(pos)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:170')
 	if math_abs(pos.x) > spawn_circle_size then return false end
 	if math_abs(pos.y) > spawn_circle_size then return false end
 	if math_sqrt(pos.x ^ 2 + pos.y ^ 2) > spawn_circle_size then return false end
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:174')
 	return true
 end
 
@@ -179,13 +192,16 @@ local river_y_1 = bb_config.border_river_width * -1.5
 local river_y_2 = bb_config.border_river_width * 1.5
 local river_width_half = math_floor(bb_config.border_river_width * -0.5)
 function is_horizontal_border_river(pos)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:180')
 	if pos.y < river_y_1 then return false end
 	if pos.y > river_y_2 then return false end
 	if pos.y >= river_width_half - (math_abs(get_noise(1, pos)) * 4) then return true end
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:184')
 	return false
 end
 
 local function generate_starting_area(pos, distance_to_center, surface)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:187')
 	-- assert(distance_to_center >= spawn_circle_size) == true
 	local spawn_wall_radius = 116
 	local noise_multiplier = 15 
@@ -193,6 +209,7 @@ local function generate_starting_area(pos, distance_to_center, surface)
 
 	-- Avoid calculating noise, see comment below
 	if (distance_to_center + min_noise - spawn_wall_radius) > 4.5 then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:195')
 		return
 	end
 
@@ -225,6 +242,7 @@ local function generate_starting_area(pos, distance_to_center, surface)
 		if tile_name == "water" or tile_name == "deepwater" then
 			surface.set_tiles({{name = get_replacement_tile(surface, pos), position = pos}}, true)
 		end
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:227')
 		return
 	end
 
@@ -268,6 +286,7 @@ local function generate_starting_area(pos, distance_to_center, surface)
 end
 
 local function generate_river(surface, left_top_x, left_top_y)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:269')
 	if left_top_y ~= -32 then return end
 	for x = 0, 31, 1 do
 		for y = 0, 31, 1 do
@@ -294,6 +313,7 @@ end
 local size_of_scrap_vectors = #scrap_vectors
 
 local function generate_extra_worm_turrets(surface, left_top)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:295')
 	local chunk_distance_to_center = math_sqrt(left_top.x ^ 2 + left_top.y ^ 2)
 	if bb_config.bitera_area_distance > chunk_distance_to_center then return end
 	
@@ -330,14 +350,17 @@ local bitera_area_distance = bb_config.bitera_area_distance * -1
 local biter_area_angle = 0.45
 
 local function is_biter_area(position)
+		log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:331')
 	local a = bitera_area_distance - (math_abs(position.x) * biter_area_angle)	
 	if position.y - 70 > a then return false end
 	if position.y + 70 < a then return true end	
 	if position.y + (get_noise(3, position) * 64) > a then return false end
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:336')
 	return true
 end
 
 local function draw_biter_area(surface, left_top_x, left_top_y)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:339')
 	if not is_biter_area({x = left_top_x, y = left_top_y - 96}) then return end
 	
 	local seed = game.surfaces[global.bb_surface_name].map_gen_settings.seed
@@ -387,6 +410,7 @@ local function draw_biter_area(surface, left_top_x, left_top_y)
 end
 
 local function mixed_ore(surface, left_top_x, left_top_y)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:388')
 	local seed = game.surfaces[global.bb_surface_name].map_gen_settings.seed
 	
 	local noise = GetNoise("bb_ore", {x = left_top_x + 16, y = left_top_y + 16}, seed)
@@ -418,6 +442,7 @@ local function mixed_ore(surface, left_top_x, left_top_y)
 end
 
 function Public.generate(event)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:419')
 	local surface = event.surface
 	local left_top = event.area.left_top
 	local left_top_x = left_top.x
@@ -430,6 +455,7 @@ function Public.generate(event)
 end
 
 function Public.draw_spawn_circle(surface)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:431')
 	local tiles = {}
 	for x = spawn_circle_size * -1, -1, 1 do
 		for y = spawn_circle_size * -1, -1, 1 do
@@ -466,6 +492,7 @@ function Public.draw_spawn_circle(surface)
 end
 
 function Public.draw_spawn_area(surface)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:467')
 	local chunk_r = 4
 	local r = chunk_r * 32	
 	
@@ -485,6 +512,7 @@ end
 
 
 local function draw_grid_ore_patch(count, grid, name, surface, size, density)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:486')
 	-- Takes a random left_top coordinate from grid, removes it and draws
 	-- ore patch on top of it. Grid is held by reference, so this function
 	-- is reentrant.
@@ -500,6 +528,7 @@ local function draw_grid_ore_patch(count, grid, name, surface, size, density)
 end
 
 local function _clear_resources(surface, area)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:501')
 	local resources = surface.find_entities_filtered {
 		area = area,
 		type = "resource",
@@ -516,10 +545,12 @@ local function _clear_resources(surface, area)
 		::clear_resources_cont::
 	end
 
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:518')
 	return i
 end
 
 function Public.clear_ore_in_main(surface)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:521')
 	local area = {
 		left_top = { -150, -150 },
 		right_bottom = { 150, 0 }
@@ -544,6 +575,7 @@ function Public.clear_ore_in_main(surface)
 end
 
 function Public.generate_spawn_ore(surface)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:545')
 	-- This array holds indicies of chunks onto which we desire to
 	-- generate ore patches. It is visually representing north spawn
 	-- area. One element was removed on purpose - we don't want to
@@ -571,6 +603,7 @@ function Public.generate_spawn_ore(surface)
 end
 
 function Public.generate_additional_rocks(surface)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:572')
 	local r = 130
 	if surface.count_entities_filtered({type = "simple-entity", area = {{r * -1, r * -1}, {r, 0}}}) >= 12 then return end		
 	local position = {x = -96 + math_random(0, 192), y = -40 - math_random(0, 96)}
@@ -584,6 +617,7 @@ function Public.generate_additional_rocks(surface)
 end
 
 function Public.generate_silo(surface)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:585')
 	local pos = {x = -32 + math_random(0, 64), y = -72}
 	local mirror_position = {x = pos.x * -1, y = pos.y * -1}
 
@@ -620,6 +654,7 @@ function Public.generate_silo(surface)
 end
 --[[
 function Public.generate_spawn_goodies(surface)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:621')
 	local tiles = surface.find_tiles_filtered({name = "stone-path"})
 	table.shuffle_table(tiles)
 	local budget = 1500
@@ -652,6 +687,7 @@ end
 ]]
 
 function Public.minable_wrecks(event)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:653')
 	local entity = event.entity
 	if not entity then return end
 	if not entity.valid then return end
@@ -686,6 +722,7 @@ end
 
 --Landfill Restriction
 function Public.restrict_landfill(surface, user, tiles)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:687')
 	for _, t in pairs(tiles) do
 		local distance_to_center = math_sqrt(t.position.x ^ 2 + t.position.y ^ 2)
 		local check_position = t.position
@@ -704,6 +741,7 @@ function Public.restrict_landfill(surface, user, tiles)
 end
 
 function Public.deny_bot_landfill(event)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:705')
 	if event.item ~= nil and event.item.name == "landfill" then
 		Public.restrict_landfill(event.robot.surface, nil, event.tiles)
 	end
@@ -712,14 +750,17 @@ end
 --Construction Robot Restriction
 local robot_build_restriction = {
 	["north"] = function(y)
+		log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:713')
 		if y >= -10 then return true end
 	end,
 	["south"] = function(y)
+		log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:716')
 		if y <= 10 then return true end
 	end
 }
 
 function Public.deny_construction_bots(event)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:721')
 	if not robot_build_restriction[event.robot.force.name] then return end
 	if not robot_build_restriction[event.robot.force.name](event.created_entity.position.y) then return end
 	local inventory = event.robot.get_inventory(defines.inventory.robot_cargo)
@@ -730,6 +771,7 @@ function Public.deny_construction_bots(event)
 end
 
 function Public.deny_enemy_side_ghosts(event)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:731')
 	if event.created_entity.type ~= 'entity-ghost' then return end
 	local force = game.get_player(event.player_index).force.name
 	if not robot_build_restriction[force] then return end
@@ -737,4 +779,5 @@ function Public.deny_enemy_side_ghosts(event)
 	event.created_entity.destroy()
 end
 
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/terrain.lua:739')
 return Public

@@ -42,37 +42,48 @@ end
 local group_size_modifier_raffle_size = #group_size_modifier_raffle
 
 local function debug_print(msg)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:43')
     local debug = WD.get('debug')
     if not debug then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:46')
         return
     end
     print('WaveDefense: ' .. msg)
 end
 
 local function valid(userdata)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:51')
     if not (userdata and userdata.valid) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:53')
         return false
     end
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:55')
     return true
 end
 
 local function find_initial_spot(surface, position)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:58')
     local spot = WD.get('spot')
     if not spot then
         local pos = surface.find_non_colliding_position('rocket-silo', position, 128, 1)
         WD.set('spot', pos)
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:63')
         return pos
     else
         spot = WD.get('spot')
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:66')
         return spot
     end
 end
 
 local function is_closer(pos1, pos2, pos)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:70')
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:71')
     return ((pos1.x - pos.x) ^ 2 + (pos1.y - pos.y) ^ 2) < ((pos2.x - pos.x) ^ 2 + (pos2.y - pos.y) ^ 2)
 end
 
 local function shuffle_distance(tbl, position)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:74')
     local size = #tbl
     for i = size, 1, -1 do
         local rand = math_random(size)
@@ -80,23 +91,31 @@ local function shuffle_distance(tbl, position)
             tbl[i], tbl[rand] = tbl[rand], tbl[i]
         end
     end
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:82')
     return tbl
 end
 
 local function is_position_near(pos_to_check, check_against)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:85')
     local function inside(pos)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:86')
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:87')
         return pos.x >= pos_to_check.x and pos.y >= pos_to_check.y and pos.x <= pos_to_check.x and pos.y <= pos_to_check.y
     end
 
     if inside(check_against) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:91')
         return true
     end
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:94')
     return false
 end
 
 local function remove_trees(entity)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:97')
     if not valid(entity) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:99')
         return
     end
     local surface = entity.surface
@@ -114,7 +133,9 @@ local function remove_trees(entity)
 end
 
 local function remove_rocks(entity)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:115')
     if not valid(entity) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:117')
         return
     end
     local surface = entity.surface
@@ -132,7 +153,9 @@ local function remove_rocks(entity)
 end
 
 local function fill_tiles(entity, size)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:133')
     if not valid(entity) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:135')
         return
     end
     local surface = entity.surface
@@ -157,9 +180,11 @@ local function fill_tiles(entity, size)
 end
 
 local function get_spawn_pos()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:158')
     local surface_index = WD.get('surface_index')
     local surface = game.surfaces[surface_index]
     if not surface then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:162')
         return debug_print('get_spawn_pos - surface was not valid?')
     end
 
@@ -184,39 +209,49 @@ local function get_spawn_pos()
             fill_tiles({surface = surface, position = position, valid = true})
             WD.set('spot', 'nil')
             if c == 5 then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:186')
                 return debug_print('get_spawn_pos - we could not find a spawning pos?')
             end
             goto retry
         else
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:190')
             return debug_print('get_spawn_pos - we could not find a spawning pos?')
         end
     end
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:194')
     return position
 end
 
 local function is_unit_valid(biter)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:197')
     local max_biter_age = WD.get('max_biter_age')
     if not biter.entity then
         debug_print('is_unit_valid - unit destroyed - does no longer exist')
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:201')
         return false
     end
     if not biter.entity.valid then
         debug_print('is_unit_valid - unit destroyed - invalid')
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:205')
         return false
     end
     if not biter.entity.unit_group then
         debug_print('is_unit_valid - unit destroyed - no unitgroup')
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:209')
         return false
     end
     if biter.spawn_tick + max_biter_age < game.tick then
         debug_print('is_unit_valid - unit destroyed - timed out')
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:213')
         return false
     end
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:215')
     return true
 end
 
 local function refresh_active_unit_threat()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:218')
     local active_biter_threat = WD.get('active_biter_threat')
     local active_biters = WD.get('active_biters')
     debug_print('refresh_active_unit_threat - current value ' .. active_biter_threat)
@@ -233,6 +268,7 @@ local function refresh_active_unit_threat()
 end
 
 local function time_out_biters()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:234')
     local active_biters = WD.get('active_biters')
     local active_biter_count = WD.get('active_biter_count')
     local active_biter_threat = WD.get('active_biter_threat')
@@ -262,6 +298,7 @@ local function time_out_biters()
 end
 
 local function get_random_close_spawner()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:263')
     local nests = WD.get('nests')
     local target = WD.get('target')
     local get_random_close_spawner_attempts = WD.get('get_random_close_spawner_attempts')
@@ -271,6 +308,7 @@ local function get_random_close_spawner()
     for i = 1, get_random_close_spawner_attempts, 1 do
         ::retry::
         if #nests < 1 then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:273')
             return false
         end
         local k = math_random(1, #nests)
@@ -292,10 +330,12 @@ local function get_random_close_spawner()
         end
     end
     debug_print('get_random_close_spawner - Found at x' .. spawner.position.x .. ' y' .. spawner.position.y)
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:294')
     return spawner
 end
 
 local function get_random_character()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:297')
     local characters = {}
     local surface_index = WD.get('surface_index')
     local p = game.connected_players
@@ -309,15 +349,19 @@ local function get_random_character()
         end
     end
     if not characters[1] then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:311')
         return
     end
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:313')
     return characters[math_random(1, #characters)]
 end
 
 local function set_main_target()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:316')
     local target = WD.get('target')
     if target then
         if target.valid then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:320')
             return
         end
     end
@@ -327,6 +371,7 @@ local function set_main_target()
         sec_target = get_random_character()
     end
     if not sec_target then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:329')
         return
     end
 
@@ -338,12 +383,15 @@ local function set_main_target()
 end
 
 local function set_group_spawn_position(surface)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:339')
     local spawner = get_random_close_spawner()
     if not spawner then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:342')
         return
     end
     local position = surface.find_non_colliding_position('behemoth-biter', spawner.position, 128, 1)
     if not position then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:346')
         return
     end
     WD.set('spawn_position', {x = position.x, y = position.y})
@@ -352,6 +400,7 @@ local function set_group_spawn_position(surface)
 end
 
 local function set_enemy_evolution()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:353')
     local wave_number = WD.get('wave_number')
     local biter_health_boost = WD.get('biter_health_boost')
     local threat = WD.get('threat')
@@ -380,11 +429,13 @@ local function set_enemy_evolution()
 end
 
 local function can_units_spawn()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:381')
     local threat = WD.get('threat')
 
     if threat <= 0 then
         debug_print('can_units_spawn - threat too low')
         time_out_biters()
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:387')
         return false
     end
 
@@ -393,6 +444,7 @@ local function can_units_spawn()
     if active_biter_count >= max_active_biters then
         debug_print('can_units_spawn - active biter count too high')
         time_out_biters()
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:395')
         return false
     end
 
@@ -400,12 +452,15 @@ local function can_units_spawn()
     if active_biter_threat >= threat then
         debug_print('can_units_spawn - active biter threat too high (' .. active_biter_threat .. ')')
         time_out_biters()
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:402')
         return false
     end
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:404')
     return true
 end
 
 local function get_active_unit_groups_count()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:407')
     local unit_groups = WD.get('unit_groups')
     local count = 0
 
@@ -430,12 +485,15 @@ local function get_active_unit_groups_count()
         end
     end
     debug_print('Active unit group count: ' .. count)
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:432')
     return count
 end
 
 local function spawn_biter(surface, is_boss_biter)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:435')
     if not is_boss_biter then
         if not can_units_spawn() then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:438')
             return
         end
     end
@@ -480,10 +538,12 @@ local function spawn_biter(surface, is_boss_biter)
     WD.set('active_biter_count', active_biter_count + 1)
     local active_biter_threat = WD.get('active_biter_threat')
     WD.set('active_biter_threat', active_biter_threat + math_round(threat_values[name] * boosted_health, 2))
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:482')
     return biter
 end
 
 local function set_next_wave()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:485')
     local wave_number = WD.get('wave_number')
     WD.set('wave_number', wave_number + 1)
     wave_number = WD.get('wave_number')
@@ -537,6 +597,7 @@ local function set_next_wave()
 end
 
 local function reform_group(group)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:538')
     local unit_group_command_step_length = WD.get('unit_group_command_step_length')
     local group_position = {x = group.position.x, y = group.position.y}
     local step_length = unit_group_command_step_length
@@ -550,6 +611,7 @@ local function reform_group(group)
         local unit_groups = WD.get('unit_groups')
         unit_groups[new_group.group_number] = new_group
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:552')
         return new_group
     else
         debug_print('Destroying stuck group.')
@@ -568,10 +630,12 @@ local function reform_group(group)
         end
         group.destroy()
     end
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:570')
     return nil
 end
 
 local function get_side_targets(group)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:573')
     local unit_group_command_step_length = WD.get('unit_group_command_step_length')
 
     local commands = {}
@@ -612,10 +676,12 @@ local function get_side_targets(group)
         }
     end
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:614')
     return commands
 end
 
 local function get_main_command(group)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:617')
     local unit_group_command_step_length = WD.get('unit_group_command_step_length')
     local commands = {}
     local group_position = {x = group.position.x, y = group.position.y}
@@ -623,6 +689,7 @@ local function get_main_command(group)
 
     local target = WD.get('target')
     if not valid(target) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:625')
         return
     end
 
@@ -688,11 +755,14 @@ local function get_main_command(group)
         distraction = defines.distraction.by_anything
     }
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:690')
     return commands
 end
 
 local function command_to_main_target(group, bypass)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:693')
     if not valid(group) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:695')
         return
     end
     local unit_group_last_command = WD.get('unit_group_last_command')
@@ -704,6 +774,7 @@ local function command_to_main_target(group, bypass)
 
         if unit_group_last_command[group.group_number] then
             if unit_group_last_command[group.group_number] + unit_group_command_delay > game.tick then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:706')
                 return
             end
         end
@@ -719,6 +790,7 @@ local function command_to_main_target(group, bypass)
         group = reform_group(group)
     end
     if not valid(group) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:721')
         return
     end
 
@@ -740,6 +812,7 @@ local function command_to_main_target(group, bypass)
 end
 
 local function command_to_side_target(group)
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:741')
     local unit_group_last_command = WD.get('unit_group_last_command')
     local unit_group_command_delay = WD.get('unit_group_command_delay')
     if not unit_group_last_command[group.group_number] then
@@ -748,6 +821,7 @@ local function command_to_side_target(group)
 
     if unit_group_last_command[group.group_number] then
         if unit_group_last_command[group.group_number] + unit_group_command_delay > game.tick then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:750')
             return
         end
     end
@@ -771,13 +845,16 @@ local function command_to_side_target(group)
 end
 
 local function give_side_commands_to_group()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:772')
     local enable_side_target = WD.get('enable_side_target')
     if not enable_side_target then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:775')
         return
     end
 
     local target = WD.get('target')
     if not valid(target) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:780')
         return
     end
 
@@ -794,8 +871,10 @@ local function give_side_commands_to_group()
 end
 
 local function give_main_command_to_group()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:795')
     local target = WD.get('target')
     if not valid(target) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:798')
         return
     end
 
@@ -812,19 +891,23 @@ local function give_main_command_to_group()
 end
 
 local function spawn_unit_group()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:813')
     if not can_units_spawn() then
         debug_print('spawn_unit_group - Cant spawn units?')
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:816')
         return
     end
     local target = WD.get('target')
     if not valid(target) then
         debug_print('spawn_unit_group - Target was not valid?')
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:821')
         return
     end
 
     local max_active_unit_groups = WD.get('max_active_unit_groups')
     if get_active_unit_groups_count() >= max_active_unit_groups then
         debug_print('spawn_unit_group - unit_groups at max')
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:827')
         return
     end
     local surface_index = WD.get('surface_index')
@@ -835,6 +918,7 @@ local function spawn_unit_group()
 
     local spawn_position = get_spawn_pos()
     if not spawn_position then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:837')
         return
     end
 
@@ -904,14 +988,17 @@ local function spawn_unit_group()
         WD.set('random_group', unit_group.group_number)
     end
     WD.set('spot', 'nil')
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:906')
     return true
 end
 
 local function check_group_positions()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:909')
     local unit_groups = WD.get('unit_groups')
     local unit_group_pos = WD.get('unit_group_pos')
     local target = WD.get('target')
     if not valid(target) then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:914')
         return
     end
 
@@ -919,6 +1006,7 @@ local function check_group_positions()
         if group.valid then
             local ugp = unit_group_pos.positions
             if group.state == defines.group_state.finished then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:921')
                 return command_to_main_target(group, true)
             end
             if ugp[group.group_number] then
@@ -942,6 +1030,7 @@ local function check_group_positions()
 end
 
 local function log_threat()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:943')
     local threat_log_index = WD.get('threat_log_index')
     WD.set('threat_log_index', threat_log_index + 1)
     local threat_log = WD.get('threat_log')
@@ -966,9 +1055,11 @@ local tick_tasks = {
 }
 
 local function on_tick()
+log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:967')
     local tick = game.tick
     local game_lost = WD.get('game_lost')
     if game_lost then
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:971')
         return
     end
 
@@ -1008,4 +1099,5 @@ end
 
 Event.on_nth_tick(30, on_tick)
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/main.lua:1010')
 return Public

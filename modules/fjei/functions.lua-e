@@ -4,6 +4,7 @@ local string_find = string.find
 local Public = {}
 
 function Public.get_crafting_machines_for_recipe(force_name, recipe)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:5')
 	local item_whitelist = global.fjei.item_whitelist[force_name]
 	local crafting_machines = global.fjei.crafting_machines
 	local recipe_category = recipe.category
@@ -21,10 +22,12 @@ function Public.get_crafting_machines_for_recipe(force_name, recipe)
 			end
 		end
 	end
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:23')
 	return result
 end
 
 local function set_crafting_machines()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:26')
 	global.fjei.crafting_machines = {}
 	local list = global.fjei.crafting_machines
 	local i = 1
@@ -36,18 +39,23 @@ local function set_crafting_machines()
 	end
 end
 
-local uncommon_recipes = {"barrel", "void", "blackhole"}
+local uncommon_recipes = { "barrel", "void", "blackhole" }
 local function is_uncommon_recipe(recipe_name)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:39')
 	for _, name in pairs(uncommon_recipes) do
 		local a, b = string_find(recipe_name, name, 1, true)
-		if a then return true end
+		if a then
+			log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:43')
+			return true
+		end
 	end
 end
 
 local function shift_uncommon_recipe_names(tbl)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:48')
 	local list_common = {}
 	local list_uncommon = {}
-	
+
 	for key, recipe_name in pairs(tbl) do
 		if is_uncommon_recipe(recipe_name) then
 			table_insert(list_uncommon, recipe_name)
@@ -55,8 +63,11 @@ local function shift_uncommon_recipe_names(tbl)
 			table_insert(list_common, recipe_name)
 		end
 	end
-	if #list_uncommon == 0 then return end
-	
+	if #list_uncommon == 0 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:60')
+		return
+	end
+
 	local i = 1
 	for _, recipe_name in pairs(list_common) do
 		tbl[i] = recipe_name
@@ -69,50 +80,64 @@ local function shift_uncommon_recipe_names(tbl)
 end
 
 local function add_item_list_product(item_list, product_name, recipe_name)
-	if not item_list[product_name] then item_list[product_name] = {{}, {}} end
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:74')
+	if not item_list[product_name] then
+		item_list[product_name] = { {}, {} }
+	end
 	table_insert(item_list[product_name][1], recipe_name)
 end
 
 local function add_item_list_ingredient(item_list, ingredient_name, recipe_name)
-	if not item_list[ingredient_name] then item_list[ingredient_name] = {{}, {}} end
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:81')
+	if not item_list[ingredient_name] then
+		item_list[ingredient_name] = { {}, {} }
+	end
 	table_insert(item_list[ingredient_name][2], recipe_name)
 end
 
-local function set_item_list()	
-	global.fjei.item_list = {}		
-	local item_list = global.fjei.item_list	
-	for recipe_name, recipe in pairs(game.recipe_prototypes) do	
+local function set_item_list()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:88')
+	global.fjei.item_list = {}
+	local item_list = global.fjei.item_list
+	for recipe_name, recipe in pairs(game.recipe_prototypes) do
 		for key, product in pairs(recipe.products) do
 			add_item_list_product(item_list, product.name, recipe_name)
 		end
 		for key, ingredient in pairs(recipe.ingredients) do
 			add_item_list_ingredient(item_list, ingredient.name, recipe_name)
-		end	
+		end
 	end
-	
+
 	for key, v in pairs(item_list) do
 		if v[1] then
 			if v[1][2] then
-				table.sort(v[1], function (a, b) return a < b end)				
+				table.sort(v[1], function(a, b)
+					log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:104')
+					return a < b
+				end)
 				shift_uncommon_recipe_names(v[1])
 			end
 		end
 		if v[2] then
 			if v[2][2] then
-				table.sort(v[2], function (a, b) return a < b end)
+				table.sort(v[2], function(a, b)
+					log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:112')
+					return a < b
+				end)
 				shift_uncommon_recipe_names(v[2])
 			end
-		end	
+		end
 	end
 end
 
 local function set_sorted_item_list()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:120')
 	global.fjei.sorted_item_list = {}
 	local sorted_item_list = global.fjei.sorted_item_list
 	local item_list = global.fjei.item_list
 	local item_prototypes = game.item_prototypes
 	local fluid_prototypes = game.fluid_prototypes
-	
+
 	local sorted_items = {}
 	local i = 1
 	for key, value in pairs(item_list) do
@@ -121,8 +146,11 @@ local function set_sorted_item_list()
 			i = i + 1
 		end
 	end
-	table.sort(sorted_items, function (a, b) return a < b end)
-	
+	table.sort(sorted_items, function(a, b)
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:136')
+		return a < b
+	end)
+
 	local sorted_fluids = {}
 	local i = 1
 	for key, value in pairs(item_list) do
@@ -131,20 +159,24 @@ local function set_sorted_item_list()
 			i = i + 1
 		end
 	end
-	table.sort(sorted_fluids, function (a, b) return a < b end)
-	
+	table.sort(sorted_fluids, function(a, b)
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:148')
+		return a < b
+	end)
+
 	local i = 1
-	for key, name in pairs(sorted_items) do	
+	for key, name in pairs(sorted_items) do
 		sorted_item_list[i] = name
-		i = i + 1		
+		i = i + 1
 	end
-	for key, name in pairs(sorted_fluids) do		
+	for key, name in pairs(sorted_fluids) do
 		sorted_item_list[i] = name
-		i = i + 1		
+		i = i + 1
 	end
 end
 
 local function add_recipe_to_whitelist(item_whitelist, recipe)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:162')
 	for key, product in pairs(recipe.products) do
 		item_whitelist[product.name] = true
 	end
@@ -154,7 +186,11 @@ local function add_recipe_to_whitelist(item_whitelist, recipe)
 end
 
 function Public.add_research_to_whitelist(force, effects)
-	if not effects then return end
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:171')
+	if not effects then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:173')
+		return
+	end
 	local item_whitelist = global.fjei.item_whitelist[force.name]
 	local items_have_been_added = false
 	for _, effect in pairs(effects) do
@@ -163,19 +199,21 @@ function Public.add_research_to_whitelist(force, effects)
 			items_have_been_added = true
 		end
 	end
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:183')
 	return items_have_been_added
 end
 
 local function set_item_whitelist(force)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:186')
 	global.fjei.item_whitelist[force.name] = {}
 	local item_whitelist = global.fjei.item_whitelist[force.name]
-	
+
 	for key, recipe in pairs(force.recipes) do
 		if recipe.enabled and not recipe.hidden then
 			add_recipe_to_whitelist(item_whitelist, recipe)
 		end
 	end
-	
+
 	for key, technology in pairs(force.technologies) do
 		if technology.researched then
 			Public.add_research_to_whitelist(force, technology.effects)
@@ -184,6 +222,7 @@ local function set_item_whitelist(force)
 end
 
 local function set_item_whitelists_for_all_forces()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:203')
 	global.fjei.item_whitelist = {}
 	for _, force in pairs(game.forces) do
 		if force.index ~= 2 and force.index ~= 3 then
@@ -193,6 +232,7 @@ local function set_item_whitelists_for_all_forces()
 end
 
 function Public.set_filtered_list(player)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:212')
 	local player_data = global.fjei.player_data[player.index]
 	player_data.filtered_list = {}
 	player_data.active_page = 1
@@ -200,7 +240,7 @@ function Public.set_filtered_list(player)
 	local active_filter = player_data.active_filter
 	local sorted_item_list = global.fjei.sorted_item_list
 	local item_whitelist = global.fjei.item_whitelist[player.force.name]
-		
+
 	local i = 1
 	for key, name in pairs(sorted_item_list) do
 		if item_whitelist[name] then
@@ -220,12 +260,14 @@ function Public.set_filtered_list(player)
 end
 
 function Public.build_tables()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:239')
 	global.fjei = {}
 	global.fjei.player_data = {}
-	set_item_list()										--creates list of all items as key and two tables for each key containing [1] product recipes and [2] ingredient recipes
-	set_sorted_item_list()							--creates sorted list of all items in the game for faster searching
-	set_crafting_machines()						--creates list of available crafting entities
-	set_item_whitelists_for_all_forces()		--whitelist to only display researched items in the browser for the force
+	set_item_list() --creates list of all items as key and two tables for each key containing [1] product recipes and [2] ingredient recipes
+	set_sorted_item_list() --creates sorted list of all items in the game for faster searching
+	set_crafting_machines() --creates list of available crafting entities
+	set_item_whitelists_for_all_forces() --whitelist to only display researched items in the browser for the force
 end
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/fjei/functions.lua:248')
 return Public

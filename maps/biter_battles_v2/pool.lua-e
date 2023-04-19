@@ -2,6 +2,7 @@
 local mod = {}
 
 function mod.malloc(size)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/pool.lua:3')
 	-- Force allocates an array with hard size limit, then
 	-- returns reference to it. The 'memory' here is just a representation
 	-- layer that emulates cells within RAM.
@@ -11,10 +12,12 @@ function mod.malloc(size)
 		memory[i] = 0
 	end
 
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/pool.lua:13')
 	return memory
 end
 
 function mod.enlarge(memory, offset, bytes)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/pool.lua:16')
 	-- Resizes memory from offset by bytes. The offset should point at
 	-- last cell of allocated region to prevent overwriting.
 	if memory[offset + 1] ~= nil then
@@ -27,7 +30,9 @@ function mod.enlarge(memory, offset, bytes)
 		memory[i] = 0
 	end
 
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/pool.lua:29')
 	return memory
 end
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/pool.lua:32')
 return mod

@@ -1,9 +1,9 @@
 local Public = {}
-local BiterRaffle = require "maps.biter_battles_v2.biter_raffle"
-local Functions = require "maps.biter_battles_v2.functions"
-local bb_config = require "maps.biter_battles_v2.config"
-local fifo = require "maps.biter_battles_v2.fifo"
-local Tables = require "maps.biter_battles_v2.tables"
+local BiterRaffle = require("maps.biter_battles_v2.biter_raffle")
+local Functions = require("maps.biter_battles_v2.functions")
+local bb_config = require("maps.biter_battles_v2.config")
+local fifo = require("maps.biter_battles_v2.fifo")
+local Tables = require("maps.biter_battles_v2.tables")
 local math_random = math.random
 local math_abs = math.abs
 
@@ -16,12 +16,12 @@ for p = 0.3, 0.71, 0.1 do
 	local a = math.pi * p
 	local x = vector_radius * math.cos(a)
 	local y = vector_radius * math.sin(a)
-	attack_vectors.north[#attack_vectors.north + 1] = {x, y * -1}
-	attack_vectors.south[#attack_vectors.south + 1] = {x, y}
+	attack_vectors.north[#attack_vectors.north + 1] = { x, y * -1 }
+	attack_vectors.south[#attack_vectors.south + 1] = { x, y }
 end
 local size_of_vectors = #attack_vectors.north
 
-local unit_type_raffle = {"biter", "mixed", "mixed", "spitter", "spitter"}
+local unit_type_raffle = { "biter", "mixed", "mixed", "spitter", "spitter" }
 local size_of_unit_type_raffle = #unit_type_raffle
 
 local threat_values = {
@@ -38,97 +38,166 @@ local threat_values = {
 	["big-worm-turret"] = 24,
 	["behemoth-worm-turret"] = 32,
 	["biter-spawner"] = 32,
-	["spitter-spawner"] = 32
+	["spitter-spawner"] = 32,
 }
 
 local function get_target_entity(force_name)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:43')
 	local force_index = game.forces[force_name].index
 	local target_entity = Functions.get_random_target_entity(force_index)
-	if not target_entity then print("Unable to get target entity for " .. force_name .. ".") return end
+	if not target_entity then
+		print("Unable to get target entity for " .. force_name .. ".")
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:48')
+		return
+	end
 	for _ = 1, 2, 1 do
 		local e = Functions.get_random_target_entity(force_index)
 		if math_abs(e.position.x) < math_abs(target_entity.position.x) then
 			target_entity = e
 		end
 	end
-	if not target_entity then print("Unable to get target entity for " .. force_name .. ".") return end
+	if not target_entity then
+		print("Unable to get target entity for " .. force_name .. ".")
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:58')
+		return
+	end
 	--print("Target entity for " .. force_name .. ": " .. target_entity.name .. " at x=" .. target_entity.position.x .. " y=" .. target_entity.position.y)
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:61')
 	return target_entity
 end
 
 local function get_threat_ratio(biter_force_name)
-	if global.bb_threat[biter_force_name] <= 0 then return 0 end
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:64')
+	if global.bb_threat[biter_force_name] <= 0 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:66')
+		return 0
+	end
 	local t1 = global.bb_threat["north_biters"]
 	local t2 = global.bb_threat["south_biters"]
-	if t1 == 0 and t2 == 0 then return 0.5 end
-	if t1 < 0 then t1 = 0 end
-	if t2 < 0 then t2 = 0 end
+	if t1 == 0 and t2 == 0 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:71')
+		return 0.5
+	end
+	if t1 < 0 then
+		t1 = 0
+	end
+	if t2 < 0 then
+		t2 = 0
+	end
 	local total_threat = t1 + t2
 	local ratio = global.bb_threat[biter_force_name] / total_threat
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:81')
 	return ratio
 end
 
 local function is_biter_inactive(biter, unit_number, biter_force_name)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:84')
 	if not biter.entity then
-		if global.bb_debug then print("BiterBattles: active unit " .. unit_number .. " removed, possibly died.") end
+		if global.bb_debug then
+			print("BiterBattles: active unit " .. unit_number .. " removed, possibly died.")
+		end
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:89')
 		return true
 	end
 	if not biter.entity.valid then
-		if global.bb_debug then print("BiterBattles: active unit " .. unit_number .. " removed, biter invalid.") end
+		if global.bb_debug then
+			print("BiterBattles: active unit " .. unit_number .. " removed, biter invalid.")
+		end
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:95')
 		return true
 	end
 	if not biter.entity.unit_group then
-		if global.bb_debug then print("BiterBattles: active unit " .. unit_number .. "  at x" .. biter.entity.position.x .. " y" .. biter.entity.position.y .. " removed, had no unit group.") end
+		if global.bb_debug then
+			print(
+				"BiterBattles: active unit "
+					.. unit_number
+					.. "  at x"
+					.. biter.entity.position.x
+					.. " y"
+					.. biter.entity.position.y
+					.. " removed, had no unit group."
+			)
+		end
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:109')
 		return true
 	end
 	if not biter.entity.unit_group.valid then
-		if global.bb_debug then print("BiterBattles: active unit " .. unit_number .. " removed, unit group invalid.") end
+		if global.bb_debug then
+			print("BiterBattles: active unit " .. unit_number .. " removed, unit group invalid.")
+		end
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:115')
 		return true
 	end
 	if game.tick - biter.active_since > bb_config.biter_timeout then
-		if global.bb_debug then print("BiterBattles: " .. biter_force_name .. " unit " .. unit_number .. " timed out at tick age " .. game.tick - biter.active_since .. ".") end
+		if global.bb_debug then
+			print(
+				"BiterBattles: "
+					.. biter_force_name
+					.. " unit "
+					.. unit_number
+					.. " timed out at tick age "
+					.. game.tick - biter.active_since
+					.. "."
+			)
+		end
 		biter.entity.destroy()
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:130')
 		return true
 	end
 end
 
 Public.send_near_biters_to_silo = function()
-	if game.ticks_played < 108000 then return end
-	if not global.rocket_silo["north"] then return end
-	if not global.rocket_silo["south"] then return end
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:134')
+	if game.ticks_played < 108000 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:136')
+		return
+	end
+	if not global.rocket_silo["north"] then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:139')
+		return
+	end
+	if not global.rocket_silo["south"] then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:142')
+		return
+	end
 
 	game.surfaces[global.bb_surface_name].set_multi_command({
-		command={
-			type=defines.command.attack,
-			target=global.rocket_silo["north"],
-			distraction=defines.distraction.none
-			},
+		command = {
+			type = defines.command.attack,
+			target = global.rocket_silo["north"],
+			distraction = defines.distraction.none,
+		},
 		unit_count = 8,
 		force = "north_biters",
-		unit_search_distance = 64
-		})
+		unit_search_distance = 64,
+	})
 
 	game.surfaces[global.bb_surface_name].set_multi_command({
-		command={
-			type=defines.command.attack,
-			target=global.rocket_silo["south"],
-			distraction=defines.distraction.none
-			},
+		command = {
+			type = defines.command.attack,
+			target = global.rocket_silo["south"],
+			distraction = defines.distraction.none,
+		},
 		unit_count = 8,
 		force = "south_biters",
-		unit_search_distance = 64
-		})
+		unit_search_distance = 64,
+	})
 end
 
 local function get_random_spawner(biter_force_name)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:168')
 	local spawners = global.unit_spawners[biter_force_name]
 	local size_of_spawners = #spawners
 
 	for _ = 1, 256, 1 do
-		if size_of_spawners == 0 then return end
+		if size_of_spawners == 0 then
+			log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:174')
+			return
+		end
 		local index = math_random(1, size_of_spawners)
 		local spawner = spawners[index]
 		if spawner and spawner.valid then
+			log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:179')
 			return spawner
 		else
 			table.remove(spawners, index)
@@ -138,6 +207,7 @@ local function get_random_spawner(biter_force_name)
 end
 
 local function select_units_around_spawner(spawner, force_name, side_target)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:187')
 	local biter_force_name = spawner.force.name
 
 	local valid_biters = {}
@@ -146,22 +216,28 @@ local function select_units_around_spawner(spawner, force_name, side_target)
 	local threat = global.bb_threat[biter_force_name] / 10
 
 	local unit_count = 0
-	local max_unit_count = math.floor(global.bb_threat[biter_force_name] * 0.25) + math_random(6,12)
-	if max_unit_count > bb_config.max_group_size then max_unit_count = bb_config.max_group_size end
+	local max_unit_count = math.floor(global.bb_threat[biter_force_name] * 0.25) + math_random(6, 12)
+	if max_unit_count > bb_config.max_group_size then
+		max_unit_count = bb_config.max_group_size
+	end
 
 	--Collect biters around spawners
 	if math_random(1, 2) == 1 then
 		local biters = spawner.surface.find_enemy_units(spawner.position, 96, force_name)
 		if biters[1] then
 			for _, biter in pairs(biters) do
-				if unit_count >= max_unit_count then break end
+				if unit_count >= max_unit_count then
+					break
+				end
 				if biter.force.name == biter_force_name then
 					i = i + 1
 					valid_biters[i] = biter
 					unit_count = unit_count + 1
 					threat = threat - threat_values[biter.name]
 				end
-				if threat < 0 then break end
+				if threat < 0 then
+					break
+				end
 			end
 		end
 	end
@@ -169,34 +245,46 @@ local function select_units_around_spawner(spawner, force_name, side_target)
 	--Manual spawning of units
 	local roll_type = unit_type_raffle[math_random(1, size_of_unit_type_raffle)]
 	for _ = 1, max_unit_count - unit_count, 1 do
-		if threat < 0 then break end
+		if threat < 0 then
+			break
+		end
 		local unit_name = BiterRaffle.roll(roll_type, global.bb_evolution[biter_force_name])
 		local position = spawner.surface.find_non_colliding_position(unit_name, spawner.position, 128, 2)
-		if not position then break end
-		local biter = spawner.surface.create_entity({name = unit_name, force = biter_force_name, position = position})
+		if not position then
+			break
+		end
+		local biter = spawner.surface.create_entity({ name = unit_name, force = biter_force_name, position = position })
 		threat = threat - threat_values[biter.name]
 		i = i + 1
 		valid_biters[i] = biter
 		--Announce New Spawn
-		if(global.biter_spawn_unseen[force_name][unit_name]) then
+		if global.biter_spawn_unseen[force_name][unit_name] then
 			game.print("A " .. unit_name:gsub("-", " ") .. " was spotted far away on team " .. force_name .. "...")
 			global.biter_spawn_unseen[force_name][unit_name] = false
 		end
 	end
 
-	if global.bb_debug then game.print(get_active_biter_count(biter_force_name) .. " active units for " .. biter_force_name) end
+	if global.bb_debug then
+		game.print(get_active_biter_count(biter_force_name) .. " active units for " .. biter_force_name)
+	end
 
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:248')
 	return valid_biters
 end
 
 local function send_group(unit_group, force_name, side_target)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:251')
 	local target
 	if side_target then
 		target = side_target
 	else
 		target = get_target_entity(force_name)
 	end
-	if not target then print("No target for " .. force_name .. " biters.") return end
+	if not target then
+		print("No target for " .. force_name .. " biters.")
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:260')
+		return
+	end
 
 	target = target.position
 
@@ -204,7 +292,7 @@ local function send_group(unit_group, force_name, side_target)
 	local vector = attack_vectors[force_name][math_random(1, size_of_vectors)]
 	local distance_modifier = math_random(25, 100) * 0.01
 
-	local position = {target.x + (vector[1] * distance_modifier), target.y + (vector[2] * distance_modifier)}
+	local position = { target.x + (vector[1] * distance_modifier), target.y + (vector[2] * distance_modifier) }
 	position = unit_group.surface.find_non_colliding_position("stone-furnace", position, 96, 1)
 	if position then
 		if math.abs(position.y) < math.abs(unit_group.position.y) then
@@ -212,7 +300,7 @@ local function send_group(unit_group, force_name, side_target)
 				type = defines.command.go_to_location,
 				destination = position,
 				radius = 32,
-				distraction = defines.distraction.by_enemy
+				distraction = defines.distraction.by_enemy,
 			}
 		end
 	end
@@ -221,43 +309,53 @@ local function send_group(unit_group, force_name, side_target)
 		type = defines.command.attack_area,
 		destination = target,
 		radius = 32,
-		distraction = defines.distraction.by_enemy
+		distraction = defines.distraction.by_enemy,
 	}
 
 	commands[#commands + 1] = {
 		type = defines.command.attack,
 		target = global.rocket_silo[force_name],
-		distraction = defines.distraction.by_damage
+		distraction = defines.distraction.by_damage,
 	}
 
 	unit_group.set_command({
 		type = defines.command.compound,
 		structure_type = defines.compound_command.logical_and,
-		commands = commands
+		commands = commands,
 	})
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:300')
 	return true
 end
 
 local function get_unit_group_position(spawner)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:303')
 	local p
 	if spawner.force.name == "north_biters" then
-		p = {x = spawner.position.x, y = spawner.position.y + 4}
+		p = { x = spawner.position.x, y = spawner.position.y + 4 }
 	else
-		p = {x = spawner.position.x, y = spawner.position.y - 4}
+		p = { x = spawner.position.x, y = spawner.position.y - 4 }
 	end
 	p = spawner.surface.find_non_colliding_position("electric-furnace", p, 256, 1)
 	if not p then
-		if global.bb_debug then game.print("No unit_group_position found for team " .. spawner.force.name) end
+		if global.bb_debug then
+			game.print("No unit_group_position found for team " .. spawner.force.name)
+		end
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:315')
 		return
 	end
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:317')
 	return p
 end
 
 local function get_nearby_biter_nest(target_entity)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:320')
 	local center = target_entity.position
 	local biter_force_name = target_entity.force.name .. "_biters"
 	local spawner = get_random_spawner(biter_force_name)
-	if not spawner then return end
+	if not spawner then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:325')
+		return
+	end
 	local best_distance = (center.x - spawner.position.x) ^ 2 + (center.y - spawner.position.y) ^ 2
 
 	for _ = 1, 16, 1 do
@@ -269,40 +367,59 @@ local function get_nearby_biter_nest(target_entity)
 		end
 	end
 
-	if not spawner then return end
+	if not spawner then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:339')
+		return
+	end
 	--print("Nearby biter nest found at x=" .. spawner.position.x .. " y=" .. spawner.position.y .. ".")
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:342')
 	return spawner
 end
 
 local function create_attack_group(surface, force_name, biter_force_name)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:345')
 	local threat = global.bb_threat[biter_force_name]
-	if threat <= 0 then return false end
+	if threat <= 0 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:348')
+		return false
+	end
 
 	local side_target = get_target_entity(force_name)
 	if not side_target then
 		print("No side target found for " .. force_name .. ".")
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:354')
 		return
 	end
 
 	local spawner = get_nearby_biter_nest(side_target)
 	if not spawner then
 		print("No spawner found for " .. force_name .. ".")
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:360')
 		return
 	end
 
 	local unit_group_position = get_unit_group_position(spawner)
-	if not unit_group_position then return end
+	if not unit_group_position then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:365')
+		return
+	end
 
 	local units = select_units_around_spawner(spawner, force_name, side_target)
-	if not units then return end
+	if not units then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:370')
+		return
+	end
 
-	local unit_group = surface.create_unit_group({position = unit_group_position, force = biter_force_name})
-	for _, unit in pairs(units) do unit_group.add_member(unit) end
+	local unit_group = surface.create_unit_group({ position = unit_group_position, force = biter_force_name })
+	for _, unit in pairs(units) do
+		unit_group.add_member(unit)
+	end
 
 	send_group(unit_group, force_name, side_target)
 end
 
 Public.pre_main_attack = function()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:381')
 	local surface = game.surfaces[global.bb_surface_name]
 	local force_name = global.next_attack
 
@@ -310,14 +427,16 @@ Public.pre_main_attack = function()
 		local biter_force_name = force_name .. "_biters"
 		global.main_attack_wave_amount = math.ceil(get_threat_ratio(biter_force_name) * 7)
 
-		if global.bb_debug then game.print(global.main_attack_wave_amount .. " unit groups designated for " .. force_name .. " biters.") end
+		if global.bb_debug then
+			game.print(global.main_attack_wave_amount .. " unit groups designated for " .. force_name .. " biters.")
+		end
 	else
 		global.main_attack_wave_amount = 0
 	end
 end
 
-
 Public.perform_main_attack = function()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:397')
 	if global.main_attack_wave_amount > 0 then
 		local surface = game.surfaces[global.bb_surface_name]
 		local force_name = global.next_attack
@@ -329,6 +448,7 @@ Public.perform_main_attack = function()
 end
 
 Public.post_main_attack = function()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:408')
 	global.main_attack_wave_amount = 0
 	if global.next_attack == "north" then
 		global.next_attack = "south"
@@ -339,32 +459,49 @@ end
 
 --By Maksiu1000 skip the last two tech
 Public.unlock_satellite = function(event)
-    -- Skip unrelated events
-    if event.research.name ~= 'speed-module-3' then
-        return
-    end
-    local force = event.research.force
-    if not force.technologies['rocket-silo'].researched then
-        force.technologies['rocket-silo'].researched=true
-        force.technologies['space-science-pack'].researched=true
-    end
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:418')
+	-- Skip unrelated events
+	if event.research.name ~= "speed-module-3" then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:421')
+		return
+	end
+	local force = event.research.force
+	if not force.technologies["rocket-silo"].researched then
+		force.technologies["rocket-silo"].researched = true
+		force.technologies["space-science-pack"].researched = true
+	end
 end
 
 Public.raise_evo = function()
-	if global.freeze_players then return end
-	if not global.training_mode and (#game.forces.north.connected_players == 0 or #game.forces.south.connected_players == 0) then return end
-	if game.ticks_played < 7200 then return end
-	if ( 1 <= global.difficulty_vote_index) and ( 3 >= global.difficulty_vote_index) then
-		local x = game.ticks_played/3600 -- current length of the match in minutes
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:430')
+	if global.freeze_players then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:432')
+		return
+	end
+	if
+		not global.training_mode
+		and (#game.forces.north.connected_players == 0 or #game.forces.south.connected_players == 0)
+	then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:438')
+		return
+	end
+	if game.ticks_played < 7200 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:441')
+		return
+	end
+	if (1 <= global.difficulty_vote_index) and (3 >= global.difficulty_vote_index) then
+		local x = game.ticks_played / 3600 -- current length of the match in minutes
 		global.difficulty_vote_value = ((x / 470) ^ 3.7) + Tables.difficulties[global.difficulty_vote_index].value
 	end
 
 	local amount = math.ceil(global.evo_raise_counter * 0.75)
 
-	if not global.total_passive_feed_redpotion then global.total_passive_feed_redpotion = 0 end
+	if not global.total_passive_feed_redpotion then
+		global.total_passive_feed_redpotion = 0
+	end
 	global.total_passive_feed_redpotion = global.total_passive_feed_redpotion + amount
 
-	local biter_teams = {["north_biters"] = "north", ["south_biters"] = "south"}
+	local biter_teams = { ["north_biters"] = "north", ["south_biters"] = "south" }
 	local a_team_has_players = false
 	for bf, pf in pairs(biter_teams) do
 		if #game.forces[pf].connected_players > 0 then
@@ -372,19 +509,29 @@ Public.raise_evo = function()
 			a_team_has_players = true
 		end
 	end
-	if not a_team_has_players then return end
+	if not a_team_has_players then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:464')
+		return
+	end
 	global.evo_raise_counter = global.evo_raise_counter + (1 * 0.50)
 end
 
 Public.reset_evo = function()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:469')
 	-- Shouldn't reset evo if any of the teams fed. Feeding is blocked when voting is in progress.
-	if game.ticks_played >= global.difficulty_votes_timeout then return end
+	if game.ticks_played >= global.difficulty_votes_timeout then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:472')
+		return
+	end
 
 	local amount = global.total_passive_feed_redpotion
-	if amount < 1 then return end
+	if amount < 1 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:477')
+		return
+	end
 	global.total_passive_feed_redpotion = 0
 
-	local biter_teams = {["north_biters"] = "north", ["south_biters"] = "south"}
+	local biter_teams = { ["north_biters"] = "north", ["south_biters"] = "south" }
 	for bf, _ in pairs(biter_teams) do
 		global.bb_evolution[bf] = 0
 		set_evo_and_threat(amount, "automation-science-pack", bf)
@@ -393,26 +540,32 @@ end
 
 --Biter Threat Value Subtraction
 function Public.subtract_threat(entity)
-	if not threat_values[entity.name] then return end
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:489')
+	if not threat_values[entity.name] then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:491')
+		return
+	end
 
 	global.bb_threat[entity.force.name] = global.bb_threat[entity.force.name] - threat_values[entity.name]
 
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:496')
 	return true
 end
 
 local UNIT_NAMES = {
-	'small-biter',
-	'small-spitter',
-	'medium-biter',
-	'medium-spitter',
-	'big-biter',
-	'big-spitter',
-	'behemoth-biter',
-	'behemoth-spitter',
+	"small-biter",
+	"small-spitter",
+	"medium-biter",
+	"medium-spitter",
+	"big-biter",
+	"big-spitter",
+	"behemoth-biter",
+	"behemoth-spitter",
 }
 local UNIT_NAMES_LEN = #UNIT_NAMES
 
 local function likely_biter_name(force_name)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:511')
 	-- Get most likely biter name based on current evolution.
 	local idx = UNIT_NAMES_LEN
 	local evo = global.bb_evolution[force_name]
@@ -427,36 +580,38 @@ local function likely_biter_name(force_name)
 		idx = math.random(idx - 1, idx)
 	end
 
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:526')
 	return UNIT_NAMES[idx]
 end
 
 local CORPSE_NAMES = {
-	'behemoth-biter-corpse',
-	'big-biter-corpse',
-	'medium-biter-corpse',
-	'small-biter-corpse',
-	'behemoth-spitter-corpse',
-	'big-spitter-corpse',
-	'medium-spitter-corpse',
-	'small-spitter-corpse',
+	"behemoth-biter-corpse",
+	"big-biter-corpse",
+	"medium-biter-corpse",
+	"small-biter-corpse",
+	"behemoth-spitter-corpse",
+	"big-spitter-corpse",
+	"medium-spitter-corpse",
+	"small-spitter-corpse",
 }
 
 local function reanimate_unit(id)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:540')
 	local position = fifo.pop(id)
 
 	-- Find corpse to spawn unit on top of.
 	local surface = game.surfaces[global.bb_surface_name]
-	local corpse = surface.find_entities_filtered {
-		type = 'corpse',
+	local corpse = surface.find_entities_filtered({
+		type = "corpse",
 		name = CORPSE_NAMES,
 		position = position,
 		radius = 1,
 		limit = 1,
-	}[1]
+	})[1]
 
-	local force = 'south_biters'
+	local force = "south_biters"
 	if position.y < 0 then
-		force = 'north_biters'
+		force = "north_biters"
 	end
 
 	local direction = nil
@@ -472,15 +627,16 @@ local function reanimate_unit(id)
 		corpse.destroy()
 	end
 
-	surface.create_entity {
+	surface.create_entity({
 		name = name,
 		position = position,
 		force = force,
 		direction = direction,
-	}
+	})
 end
 
 local function _reanimate_units(id, cycles)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:579')
 	repeat
 		-- Reanimate unit and reassign current fifo state
 		reanimate_unit(id)
@@ -489,6 +645,7 @@ local function _reanimate_units(id, cycles)
 end
 
 function Public.reanimate_units()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:587')
 	-- This FIFOs can be accessed by force indices.
 	for force, id in pairs(global.dead_units) do
 		-- Check for each side if there are any biters to reanimate.
@@ -507,33 +664,37 @@ function Public.reanimate_units()
 end
 
 Public.schedule_reanimate = function(event)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:605')
 	-- This event is to be fired from on_post_entity_died. Standard version
 	-- of this event is racing with current reanimation logic. Corpse
 	-- takes few ticks to spawn, there is also a short dying animation. This
 	-- combined makes renimation to miss corpses on the battle field
 	-- sometimes.
-	
+
 	-- If rocket silo was blown up - disable reanimate logic.
 	if global.server_restart_timer ~= nil then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:614')
 		return
 	end
 
 	-- There is no entity within this event and so we have to guess
 	-- force based on y axis.
-	local force = game.forces['south_biters']
+	local force = game.forces["south_biters"]
 	local position = event.position
 	if position.y < 0 then
-		force = game.forces['north_biters']
+		force = game.forces["north_biters"]
 	end
 
 	local idx = force.index
 	local chance = global.reanim_chance[idx]
 	if chance <= 0 then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:628')
 		return
 	end
 
 	local reanimate = math.random(1, 100) <= chance
 	if not reanimate then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:633')
 		return
 	end
 
@@ -542,14 +703,18 @@ Public.schedule_reanimate = function(event)
 end
 
 function Public.empty_reanim_scheduler()
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:640')
 	for force, id in pairs(global.dead_units) do
 		-- Check for each side if there are any biters to reanimate.
 		if not fifo.empty(id) then
+			log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:644')
 			return false
 		end
 	end
 
+	log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:648')
 	return true
 end
 
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/maps/biter_battles_v2/ai.lua:651')
 return Public

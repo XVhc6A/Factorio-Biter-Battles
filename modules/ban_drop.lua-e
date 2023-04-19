@@ -1,20 +1,31 @@
 --When a player is banned, their inventory will be spilled on the ground.
 
 local function drop_inventory(player, inventory)
-	if not inventory then return end
-	if not inventory.valid then return end
-	if inventory.is_empty() then return end
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/ban_drop.lua:2')
+	if not inventory then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/ban_drop.lua:4')
+		return
+	end
+	if not inventory.valid then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/ban_drop.lua:7')
+		return
+	end
+	if inventory.is_empty() then
+		log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/ban_drop.lua:10')
+		return
+	end
 	local position = player.position
 	local surface = player.surface
 	for i = 1, #inventory, 1 do
 		if inventory[i] and inventory[i].valid_for_read then
 			surface.spill_item_stack(position, inventory[i], true)
 		end
-	end	
+	end
 	inventory.clear()
 end
 
 local function on_player_banned(event)
+	log('Func start /Users/dan.farrell/git/Factorio-Biter-Battles/modules/ban_drop.lua:22')
 	local player = game.players[event.player_index]
 	local position = player.position
 	drop_inventory(player, player.get_inventory(defines.inventory.character_main))
@@ -24,5 +35,5 @@ local function on_player_banned(event)
 	drop_inventory(player, player.get_inventory(defines.inventory.character_trash))
 end
 
-local Event = require 'utils.event'
+local Event = require("utils.event")
 Event.add(defines.events.on_player_banned, on_player_banned)

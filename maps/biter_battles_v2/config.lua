@@ -6,14 +6,15 @@ local bb_config = {
 	["south_side_team_name"] = "Team South",
 
 	--TERRAIN OPTIONS--
-	["border_river_width"] = 44,						--Approximate width of the horizontal impassable river separating the teams. (values up to 100)
-	["builders_area"] = true,							--Grant each side a peaceful direction with no nests and biters?
-	["random_scrap"] = true,							--Generate harvestable scrap around worms randomly?
+	["border_river_width"] = 44, --Approximate width of the horizontal impassable river separating the teams. (values up to 100)
+	["builders_area"] = true, --Grant each side a peaceful direction with no nests and biters?
+	["random_scrap"] = true, --Generate harvestable scrap around worms randomly?
 
 	--BITER SETTINGS--
-	["max_group_size"] = 300,							--Maximum unit group size.
-	["biter_timeout"] = 162000,						--Time it takes in ticks for an attacking unit to be deleted. This prevents permanent stuck units.
-	["bitera_area_distance"] = 512					--Distance to the biter area.
+	["max_group_size"] = 300, --Maximum unit group size.
+	["biter_timeout"] = 162000, --Time it takes in ticks for an attacking unit to be deleted. This prevents permanent stuck units.
+	["bitera_area_distance"] = 512, --Distance to the biter area.
 }
 
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/maps/biter_battles_v2/config.lua:18')
 return bb_config

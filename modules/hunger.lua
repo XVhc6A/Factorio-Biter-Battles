@@ -1,34 +1,55 @@
 -- hunger module by mewmew --
 
-require "player_modifiers"
+require("player_modifiers")
 
 local math_random = math.random
-local P = require "player_modifiers"
+local P = require("player_modifiers")
 
-local starve_messages = {" ran out of foodstamps.", " starved.", " should not have skipped breakfast today."}
+local starve_messages = { " ran out of foodstamps.", " starved.", " should not have skipped breakfast today." }
 
-local overfeed_messages = {" ate too much and exploded.", " needs to work on their bad eating habbits.", " should have skipped dinner today.", " forgot to count them calories."}
+local overfeed_messages = {
+	" ate too much and exploded.",
+	" needs to work on their bad eating habbits.",
+	" should have skipped dinner today.",
+	" forgot to count them calories.",
+}
 
 local player_hunger_fish_food_value = 10
-local player_hunger_spawn_value = 80				
+local player_hunger_spawn_value = 80
 local player_hunger_stages = {}
 for x = 1, 200, 1 do
-	if x <= 200 then player_hunger_stages[x] = "Obese" end						
-	if x <= 179 then player_hunger_stages[x] = "Stuffed" end
-	if x <= 150 then player_hunger_stages[x] = "Bloated" end
-	if x <= 130 then player_hunger_stages[x] = "Sated" end
-	if x <= 110 then player_hunger_stages[x] = "Well Fed" end
-	if x <= 89 then player_hunger_stages[x] = "Nourished" end			
-	if x <= 70 then player_hunger_stages[x] = "Hungry" end
-	if x <= 35 then player_hunger_stages[x] = "Starving" end			
-end	
+	if x <= 200 then
+		player_hunger_stages[x] = "Obese"
+	end
+	if x <= 179 then
+		player_hunger_stages[x] = "Stuffed"
+	end
+	if x <= 150 then
+		player_hunger_stages[x] = "Bloated"
+	end
+	if x <= 130 then
+		player_hunger_stages[x] = "Sated"
+	end
+	if x <= 110 then
+		player_hunger_stages[x] = "Well Fed"
+	end
+	if x <= 89 then
+		player_hunger_stages[x] = "Nourished"
+	end
+	if x <= 70 then
+		player_hunger_stages[x] = "Hungry"
+	end
+	if x <= 35 then
+		player_hunger_stages[x] = "Starving"
+	end
+end
 
 local player_hunger_color_list = {}
 for x = 1, 50, 1 do
-	player_hunger_color_list[x] = 		{r = 0.5 + x*0.01, g = x*0.01, b = x*0.005}
-	player_hunger_color_list[50+x] = {r = 1 - x*0.02, g = 0.5 + x*0.01, b = 0.25}
-	player_hunger_color_list[100+x] = {r = 0 + x*0.02, g = 1 - x*0.01, b = 0.25}
-	player_hunger_color_list[150+x] = {r = 1 - x*0.01, g = 0.5 - x*0.01, b = 0.25 - x*0.005}
+	player_hunger_color_list[x] = { r = 0.5 + x * 0.01, g = x * 0.01, b = x * 0.005 }
+	player_hunger_color_list[50 + x] = { r = 1 - x * 0.02, g = 0.5 + x * 0.01, b = 0.25 }
+	player_hunger_color_list[100 + x] = { r = 0 + x * 0.02, g = 1 - x * 0.01, b = 0.25 }
+	player_hunger_color_list[150 + x] = { r = 1 - x * 0.01, g = 0.5 - x * 0.01, b = 0.25 - x * 0.005 }
 end
 
 local player_hunger_buff = {}
@@ -60,8 +81,11 @@ for x = max_buff_high, max_debuff_high, 1 do
 end
 
 local function create_hunger_gui(player)
-	if player.gui.top["hunger_frame"] then player.gui.top["hunger_frame"].destroy() end
-	local element = player.gui.top.add { type = "sprite-button", name = "hunger_frame", caption = " "}
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/hunger.lua:82')
+	if player.gui.top["hunger_frame"] then
+		player.gui.top["hunger_frame"].destroy()
+	end
+	local element = player.gui.top.add({ type = "sprite-button", name = "hunger_frame", caption = " " })
 	element.style.font = "default-bold"
 	element.style.minimal_height = 38
 	element.style.minimal_width = 128
@@ -73,7 +97,10 @@ local function create_hunger_gui(player)
 end
 
 local function update_hunger_gui(player)
-	if not player.gui.top["hunger_frame"] then create_hunger_gui(player) end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/hunger.lua:97')
+	if not player.gui.top["hunger_frame"] then
+		create_hunger_gui(player)
+	end
 	local str = tostring(global.player_hunger[player.name])
 	str = str .. "% "
 	str = str .. player_hunger_stages[global.player_hunger[player.name]]
@@ -82,32 +109,41 @@ local function update_hunger_gui(player)
 end
 
 function hunger_update(player, food_value)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/hunger.lua:108')
 	local player_modifiers = P.get_table()
-	if not player.character then return end
-	if food_value == -1 and player.character.driving == true then return end
-	
-	local past_hunger = global.player_hunger[player.name]	
+	if not player.character then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/hunger.lua:111')
+		return
+	end
+	if food_value == -1 and player.character.driving == true then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/hunger.lua:114')
+		return
+	end
+
+	local past_hunger = global.player_hunger[player.name]
 	global.player_hunger[player.name] = global.player_hunger[player.name] + food_value
-	if global.player_hunger[player.name] > 200 then global.player_hunger[player.name] = 200 end
-			
+	if global.player_hunger[player.name] > 200 then
+		global.player_hunger[player.name] = 200
+	end
+
 	if past_hunger == 200 and global.player_hunger[player.name] + food_value > 200 then
 		global.player_hunger[player.name] = player_hunger_spawn_value
-		player.surface.create_entity({name = "big-artillery-explosion", position = player.character.position})
+		player.surface.create_entity({ name = "big-artillery-explosion", position = player.character.position })
 		player.character.die("player")
-		game.print(player.name .. overfeed_messages[math.random(1,#overfeed_messages)], { r=0.75, g=0.0, b=0.0})				
-	end	
-	
-	if global.player_hunger[player.name] < 1 then
-		global.player_hunger[player.name] = player_hunger_spawn_value		
-		player.character.die("player")
-		game.print(player.name .. starve_messages[math.random(1,#starve_messages)], { r=0.75, g=0.0, b=0.0})	
+		game.print(player.name .. overfeed_messages[math.random(1, #overfeed_messages)], { r = 0.75, g = 0.0, b = 0.0 })
 	end
-	
+
+	if global.player_hunger[player.name] < 1 then
+		global.player_hunger[player.name] = player_hunger_spawn_value
+		player.character.die("player")
+		game.print(player.name .. starve_messages[math.random(1, #starve_messages)], { r = 0.75, g = 0.0, b = 0.0 })
+	end
+
 	if player.character then
 		if player_hunger_stages[global.player_hunger[player.name]] ~= player_hunger_stages[past_hunger] then
 			local print_message = "You are " .. player_hunger_stages[global.player_hunger[player.name]] .. "."
 			if player_hunger_stages[global.player_hunger[player.name]] == "Obese" then
-				print_message = "You have become " .. player_hunger_stages[global.player_hunger[player.name]]  .. "."					
+				print_message = "You have become " .. player_hunger_stages[global.player_hunger[player.name]] .. "."
 			end
 			if player_hunger_stages[global.player_hunger[player.name]] == "Starving" then
 				print_message = "You are starving!"
@@ -116,24 +152,33 @@ function hunger_update(player, food_value)
 			player.print(print_message, player_hunger_color_list[global.player_hunger[player.name]])
 		end
 	end
-	
-	if not player.character then return end
-	
-	if player_hunger_buff[global.player_hunger[player.name]] < 0 then
-		player_modifiers[player.index].character_running_speed_modifier["hunger"] = player_hunger_buff[global.player_hunger[player.name]] * 0.75
-	else
-		player_modifiers[player.index].character_running_speed_modifier["hunger"] = player_hunger_buff[global.player_hunger[player.name]] * 0.15
+
+	if not player.character then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/hunger.lua:151')
+		return
 	end
-	player_modifiers[player.index].character_mining_speed_modifier["hunger"] = player_hunger_buff[global.player_hunger[player.name]]
+
+	if player_hunger_buff[global.player_hunger[player.name]] < 0 then
+		player_modifiers[player.index].character_running_speed_modifier["hunger"] = player_hunger_buff[global.player_hunger[player.name]]
+			* 0.75
+	else
+		player_modifiers[player.index].character_running_speed_modifier["hunger"] = player_hunger_buff[global.player_hunger[player.name]]
+			* 0.15
+	end
+	player_modifiers[player.index].character_mining_speed_modifier["hunger"] =
+		player_hunger_buff[global.player_hunger[player.name]]
 	P.update_player_modifiers(player)
-	
+
 	update_hunger_gui(player)
 end
 
 local function on_player_joined_game(event)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/hunger.lua:168')
 	local player = game.players[event.player_index]
-	if not global.player_hunger then global.player_hunger = {} end
-	if player.online_time == 0 then		
+	if not global.player_hunger then
+		global.player_hunger = {}
+	end
+	if player.online_time == 0 then
 		global.player_hunger[player.name] = player_hunger_spawn_value
 		hunger_update(player, 0)
 	end
@@ -141,27 +186,40 @@ local function on_player_joined_game(event)
 end
 
 local function on_player_used_capsule(event)
-	if event.item.name == "raw-fish" then		
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/hunger.lua:180')
+	if event.item.name == "raw-fish" then
 		local player = game.players[event.player_index]
-		if player.character.health < player.character.prototype.max_health + player.character_health_bonus + player.force.character_health_bonus then return end		
-		hunger_update(player, player_hunger_fish_food_value)		
-		player.play_sound{path="utility/armor_insert", volume_modifier=0.9}				
+		if
+			player.character.health
+			< player.character.prototype.max_health
+				+ player.character_health_bonus
+				+ player.force.character_health_bonus
+		then
+			log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/hunger.lua:189')
+			return
+		end
+		hunger_update(player, player_hunger_fish_food_value)
+		player.play_sound({ path = "utility/armor_insert", volume_modifier = 0.9 })
 	end
 end
 
 local function on_player_respawned(event)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/hunger.lua:196')
 	local player = game.players[event.player_index]
 	global.player_hunger[player.name] = player_hunger_spawn_value
 	hunger_update(player, 0)
 end
 
-local function on_tick()		
+local function on_tick()
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/hunger.lua:202')
 	for _, player in pairs(game.connected_players) do
-		if player.afk_time < 18000 then hunger_update(player, -1) end
+		if player.afk_time < 18000 then
+			hunger_update(player, -1)
+		end
 	end
 end
 
-local event = require 'utils.event'
+local event = require("utils.event")
 event.on_nth_tick(3600, on_tick)
 event.add(defines.events.on_player_respawned, on_player_respawned)
 event.add(defines.events.on_player_used_capsule, on_player_used_capsule)

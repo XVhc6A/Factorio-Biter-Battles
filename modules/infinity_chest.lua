@@ -29,68 +29,89 @@ Global.register(
 )
 
 function Public.get_table()
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:30')
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:31')
     return this
 end
 
 function Public.create_chest(surface, position, storage)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:34')
     local entity = surface.create_entity {name = 'infinity-chest', position = position, force = 'player'}
     this.inf_chests[entity.unit_number] = {entity = entity, storage = storage}
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:37')
     return entity
 end
 
 function Public.err_msg(string)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:40')
     local debug = this.debug
     if not debug then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:43')
         return
     end
     log('[Infinity] ' .. string)
 end
 
 local function has_value(tab)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:48')
     local count = 0
     for _, k in pairs(tab) do
         count = count + 1
     end
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:53')
     return count
 end
 
 local function return_value(tab)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:56')
     for index, value in pairs(tab) do
         if value then
             local temp
             temp = value
             tab[index] = nil
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:62')
             return temp
         end
     end
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:65')
     return false
 end
 
 local function validate_player(player)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:68')
     if not player then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:70')
         return false
     end
     if not player.valid then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:73')
         return false
     end
     if not player.character then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:76')
         return false
     end
     if not player.connected then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:79')
         return false
     end
     if not game.players[player.index] then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:82')
         return false
     end
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:84')
     return true
 end
 
 local function built_entity(event)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:87')
     local entity = event.created_entity
     if not entity.valid then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:90')
         return
     end
     if entity.name ~= this.chest[entity.name] then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:93')
         return
     end
     if event.player_index then
@@ -124,17 +145,21 @@ local function built_entity(event)
 end
 
 local function built_entity_robot(event)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:125')
     local entity = event.created_entity
     if not entity.valid then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:128')
         return
     end
     if entity.name ~= this.chest[entity.name] then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:131')
         return
     end
     entity.destroy()
 end
 
 local function item(item_name, item_count, inv, unit_number)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:136')
     local item_stack = game.item_prototypes[item_name].stack_size
     local diff = item_count - item_stack
 
@@ -163,6 +188,7 @@ local function item(item_name, item_count, inv, unit_number)
                     local count = inv.insert({name = item_name, count = item_stack})
                     this.inf_storage[unit_number][item_name] = storage[item_name] - count
                 end
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:165')
                 return
             end
             local count = inv.remove({name = item_name, count = diff})
@@ -170,6 +196,7 @@ local function item(item_name, item_count, inv, unit_number)
         end
     elseif diff < 0 then
         if not storage[item_name] then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:172')
             return
         end
         if storage[item_name] > (diff * -1) then
@@ -183,6 +210,7 @@ local function item(item_name, item_count, inv, unit_number)
 end
 
 local function is_chest_empty(entity, player)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:184')
     local number = entity.unit_number
     local inv = this.inf_mode[number]
 
@@ -213,11 +241,14 @@ local function is_chest_empty(entity, player)
 end
 
 local function on_entity_died(event)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:214')
     local entity = event.entity
     if not entity then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:217')
         return
     end
     if entity.name ~= this.chest[entity.name] then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:220')
         return
     end
     local number = entity.unit_number
@@ -228,9 +259,11 @@ local function on_entity_died(event)
 end
 
 local function on_pre_player_mined_item(event)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:229')
     local entity = event.entity
     local player = game.players[event.player_index]
     if not player then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:233')
         return
     end
 
@@ -242,17 +275,20 @@ local function on_pre_player_mined_item(event)
     end
 
     if entity.name ~= this.chest[entity.name] then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:244')
         return
     end
     is_chest_empty(entity, player.index)
     local data = this.inf_gui[player.name]
     if not data then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:249')
         return
     end
     data.frame.destroy()
 end
 
 local function update_chest()
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:254')
     for unit_number, chest in pairs(this.inf_chests) do
         if not chest.valid then
             goto continue
@@ -299,11 +335,14 @@ local function update_chest()
 end
 
 local function text_changed(event)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:300')
     local element = event.element
     if not element then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:303')
         return
     end
     if not element.valid then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:306')
         return
     end
 
@@ -311,20 +350,24 @@ local function text_changed(event)
 
     local data = this.inf_gui[player.name]
     if not data then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:313')
         return
     end
 
     if not data.text_field or not data.text_field.valid then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:317')
         return
     end
 
     if not data.text_field.text then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:321')
         return
     end
 
     local value = tonumber(element.text)
 
     if not value then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:327')
         return
     end
 
@@ -333,6 +376,7 @@ local function text_changed(event)
 
         local entity = data.entity
         if not entity or not entity.valid then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:335')
             return
         end
 
@@ -340,20 +384,25 @@ local function text_changed(event)
 
         this.limits[unit_number] = value
     elseif value ~= '' and value <= default_limit then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:342')
         return
     end
     this.inf_gui[player.name].updated = false
 end
 
 local function gui_opened(event)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:347')
     if not event.gui_type == defines.gui_type.entity then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:349')
         return
     end
     local entity = event.entity
     if not entity then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:353')
         return
     end
     if not entity.valid or entity.name ~= this.chest[entity.name] then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:356')
         return
     end
     local player = game.players[event.player_index]
@@ -430,6 +479,7 @@ local function gui_opened(event)
 end
 
 local function update_gui()
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:431')
     for _, player in pairs(game.connected_players) do
         local chest_gui_data = this.inf_gui[player.name]
         if not chest_gui_data then
@@ -531,12 +581,14 @@ local function update_gui()
 end
 
 local function gui_closed(event)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:532')
     local player = game.players[event.player_index]
     local type = event.gui_type
 
     if type == defines.gui_type.custom then
         local data = this.inf_gui[player.name]
         if not data then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:539')
             return
         end
         data.frame.destroy()
@@ -545,18 +597,23 @@ local function gui_closed(event)
 end
 
 local function state_changed(event)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:546')
     local element = event.element
     if not element.valid then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:549')
         return
     end
     if not element.selected_index then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:552')
         return
     end
     local unit_number = tonumber(element.name)
     if not unit_number then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:556')
         return
     end
     if not this.inf_mode[unit_number] then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:559')
         return
     end
     this.inf_mode[unit_number] = element.selected_index
@@ -564,31 +621,39 @@ local function state_changed(event)
     if mode >= 2 then
         local player = game.players[event.player_index]
         if not validate_player(player) then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:566')
             return
         end
         this.inf_gui[player.name].updated = false
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:569')
         return
     end
 end
 
 local function gui_click(event)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:573')
     local element = event.element
     local player = game.players[event.player_index]
     if not validate_player(player) then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:577')
         return
     end
     if not element.valid then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:580')
         return
     end
     local parent = element.parent
     if not parent then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:584')
         return
     end
     if parent.name ~= 'infinity_chest_inventory' then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:587')
         return
     end
     local unit_number = tonumber(parent.parent.parent.name)
     if tonumber(element.name) == unit_number then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:591')
         return
     end
 
@@ -599,12 +664,14 @@ local function gui_click(event)
     local mode = this.inf_mode[unit_number]
 
     if not storage then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:601')
         return
     end
 
     if player.admin then
         if mode == 4 then
             if not storage[name] then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:607')
                 return
             end
             if ctrl then
@@ -621,16 +688,19 @@ local function gui_click(event)
     end
 
     if mode == 1 then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:623')
         return
     end
 
     if ctrl then
         local count = storage[name]
         if not count then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:629')
             return
         end
         local inserted = player.insert {name = name, count = count}
         if not inserted then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:633')
             return
         end
         if inserted == count then
@@ -642,9 +712,11 @@ local function gui_click(event)
         local count = storage[name]
         local stack = game.item_prototypes[name].stack_size
         if not count then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:644')
             return
         end
         if not stack then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:647')
             return
         end
         if count > stack then
@@ -656,6 +728,7 @@ local function gui_click(event)
         end
     else
         if not storage[name] then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:658')
             return
         end
         storage[name] = storage[name] - 1
@@ -675,23 +748,29 @@ local function gui_click(event)
 end
 
 local function on_gui_elem_changed(event)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:676')
     local element = event.element
     local player = game.players[event.player_index]
     if not validate_player(player) then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:680')
         return
     end
     if not element.valid then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:683')
         return
     end
     local parent = element.parent
     if not parent then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:687')
         return
     end
     if parent.name ~= 'infinity_chest_inventory' then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:690')
         return
     end
     local unit_number = tonumber(parent.parent.parent.name)
     if tonumber(element.name) == unit_number then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:694')
         return
     end
 
@@ -705,10 +784,12 @@ local function on_gui_elem_changed(event)
 
     if button == defines.mouse_button_type.right then
         storage[name] = nil
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:707')
         return
     end
 
     if not name then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:711')
         return
     end
     storage[name] = 5000000
@@ -719,18 +800,22 @@ local function on_gui_elem_changed(event)
 end
 
 local function on_entity_settings_pasted(event)
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:720')
     local player = game.get_player(event.player_index)
     if not player or not player.valid then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:723')
         return
     end
 
     local source = event.source
     if not source or not source.valid then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:728')
         return
     end
 
     local destination = event.destination
     if not destination or not destination.valid then
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:733')
         return
     end
 
@@ -743,6 +828,7 @@ local function on_entity_settings_pasted(event)
 end
 
 local function tick()
+log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:744')
     update_chest()
     update_gui()
 end
@@ -760,4 +846,5 @@ Event.add(defines.events.on_gui_elem_changed, on_gui_elem_changed)
 Event.add(defines.events.on_gui_text_changed, text_changed)
 Event.add(defines.events.on_entity_settings_pasted, on_entity_settings_pasted)
 
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/modules/infinity_chest.lua:762')
 return Public

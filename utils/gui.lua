@@ -1,6 +1,6 @@
-local Token = require 'utils.token'
-local Event = require 'utils.event'
-local Global = require 'utils.global'
+local Token = require("utils.token")
+local Event = require("utils.event")
+local Global = require("utils.global")
 
 local tostring = tostring
 local next = next
@@ -10,178 +10,200 @@ local Gui = {}
 local data = {}
 local element_map = {}
 
-Gui.token =
-    Global.register(
-    {data = data, element_map = element_map},
-    function(tbl)
-        data = tbl.data
-        element_map = tbl.element_map
-    end
-)
+Gui.token = Global.register({ data = data, element_map = element_map }, function(tbl)
+	data = tbl.data
+	element_map = tbl.element_map
+end)
 
 local top_elements = {}
 local on_visible_handlers = {}
 local on_pre_hidden_handlers = {}
 
 function Gui.uid_name()
-    return tostring(Token.uid())
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:21')
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:22')
+	return tostring(Token.uid())
 end
 
 function Gui.uid()
-    return Token.uid()
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:25')
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:26')
+	return Token.uid()
 end
 
 -- Associates data with the LuaGuiElement. If data is nil then removes the data
 function Gui.set_data(element, value)
-    local player_index = element.player_index
-    local values = data[player_index]
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:30')
+	local player_index = element.player_index
+	local values = data[player_index]
 
-    if value == nil then
-        if not values then
-            return
-        end
+	if value == nil then
+		if not values then
+			log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:36')
+			return
+		end
 
-        values[element.index] = nil
+		values[element.index] = nil
 
-        if next(values) == nil then
-            data[player_index] = nil
-        end
-    else
-        if not values then
-            values = {}
-            data[player_index] = values
-        end
+		if next(values) == nil then
+			data[player_index] = nil
+		end
+	else
+		if not values then
+			values = {}
+			data[player_index] = values
+		end
 
-        values[element.index] = value
-    end
+		values[element.index] = value
+	end
 end
 local set_data = Gui.set_data
 
 -- Gets the Associated data with this LuaGuiElement if any.
 function Gui.get_data(element)
-    local player_index = element.player_index
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:56')
+	local player_index = element.player_index
 
-    local values = data[player_index]
-    if not values then
-        return nil
-    end
+	local values = data[player_index]
+	if not values then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:61')
+		return nil
+	end
 
-    return values[element.index]
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:64')
+	return values[element.index]
 end
 
 local remove_data_recursively
 -- Removes data associated with LuaGuiElement and its children recursively.
 function Gui.remove_data_recursively(element)
-    set_data(element, nil)
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:69')
+	set_data(element, nil)
 
-    local children = element.children
+	local children = element.children
 
-    if not children then
-        return
-    end
+	if not children then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:75')
+		return
+	end
 
-    for _, child in next, children do
-        if child.valid then
-            remove_data_recursively(child)
-        end
-    end
+	for _, child in next, children do
+		if child.valid then
+			remove_data_recursively(child)
+		end
+	end
 end
 remove_data_recursively = Gui.remove_data_recursively
 
 local remove_children_data
 function Gui.remove_children_data(element)
-    local children = element.children
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:87')
+	local children = element.children
 
-    if not children then
-        return
-    end
+	if not children then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:91')
+		return
+	end
 
-    for _, child in next, children do
-        if child.valid then
-            set_data(child, nil)
-            remove_children_data(child)
-        end
-    end
+	for _, child in next, children do
+		if child.valid then
+			set_data(child, nil)
+			remove_children_data(child)
+		end
+	end
 end
 remove_children_data = Gui.remove_children_data
 
 function Gui.destroy(element)
-    remove_data_recursively(element)
-    element.destroy()
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:103')
+	remove_data_recursively(element)
+	element.destroy()
 end
 
 function Gui.clear(element)
-    remove_children_data(element)
-    element.clear()
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:108')
+	remove_children_data(element)
+	element.clear()
 end
 
 local function clear_invalid_data()
-    for _, player in pairs(game.connected_players) do
-        local player_index = player.index
-        local values = data[player_index]
-        if values then
-            for _, element in next, values do
-                if type(element) == 'table' then
-                    for key, obj in next, element do
-                        if type(obj) == 'table' and obj.valid ~= nil then
-                            if not obj.valid then
-                                element[key] = nil
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:113')
+	for _, player in pairs(game.connected_players) do
+		local player_index = player.index
+		local values = data[player_index]
+		if values then
+			for _, element in next, values do
+				if type(element) == "table" then
+					for key, obj in next, element do
+						if type(obj) == "table" and obj.valid ~= nil then
+							if not obj.valid then
+								element[key] = nil
+							end
+						end
+					end
+				end
+			end
+		end
+	end
 end
 Event.on_nth_tick(300, clear_invalid_data)
 
 local function handler_factory(event_id)
-    local handlers
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:134')
+	local handlers
 
-    local function on_event(event)
-        local element = event.element
-        if not element or not element.valid then
-            return
-        end
+	local function on_event(event)
+		log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:137')
+		local element = event.element
+		if not element or not element.valid then
+			log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:140')
+			return
+		end
 
-        local handler = handlers[element.name]
-        if not handler then
-            return
-        end
+		local handler = handlers[element.name]
+		if not handler then
+			log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:145')
+			return
+		end
 
-        local player = game.get_player(event.player_index)
-        if not player or not player.valid then
-            return
-        end
-        event.player = player
+		local player = game.get_player(event.player_index)
+		if not player or not player.valid then
+			log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:150')
+			return
+		end
+		event.player = player
 
-        handler(event)
-    end
+		handler(event)
+	end
 
-    return function(element_name, handler)
-        if not handlers then
-            handlers = {}
-            Event.add(event_id, on_event)
-        end
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:157')
+	return function(element_name, handler)
+		if not handlers then
+			handlers = {}
+			Event.add(event_id, on_event)
+		end
 
-        handlers[element_name] = handler
-    end
+		handlers[element_name] = handler
+	end
 end
 
 local function custom_handler_factory(handlers)
-    return function(element_name, handler)
-        handlers[element_name] = handler
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:167')
+	log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:168')
+	return function(element_name, handler)
+		handlers[element_name] = handler
+	end
 end
 
 local function custom_raise(handlers, element, player)
-    local handler = handlers[element.name]
-    if not handler then
-        return
-    end
+	log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:173')
+	local handler = handlers[element.name]
+	if not handler then
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:176')
+		return
+	end
 
-    handler({element = element, player = player})
+	handler({ element = element, player = player })
 end
 
 -- Register a handler for the on_gui_checked_state_changed event for LuaGuiElements with element_name.
@@ -241,60 +263,69 @@ Gui.on_player_show_top = custom_handler_factory(on_visible_handlers)
 Gui.on_pre_player_hide_top = custom_handler_factory(on_pre_hidden_handlers)
 
 if _DEBUG then
-    local concat = table.concat
+	local concat = table.concat
 
-    local names = {}
-    Gui.names = names
+	local names = {}
+	Gui.names = names
 
-    function Gui.uid_name()
-        local info = debug.getinfo(2, 'Sl')
-        local filepath = info.source:match('^.+/currently%-playing/(.+)$'):sub(1, -5)
-        local line = info.currentline
+	function Gui.uid_name()
+		log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:244')
+		local info = debug.getinfo(2, "Sl")
+		local filepath = info.source:match("^.+/currently%-playing/(.+)$"):sub(1, -5)
+		local line = info.currentline
 
-        local token = tostring(Token.uid())
+		local token = tostring(Token.uid())
 
-        local name = concat {token, ' - ', filepath, ':line:', line}
-        names[token] = name
+		local name = concat({ token, " - ", filepath, ":line:", line })
+		names[token] = name
 
-        return token
-    end
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:254')
+		return token
+	end
 
-    function Gui.set_data(element, value)
-        local player_index = element.player_index
-        local values = data[player_index]
+	function Gui.set_data(element, value)
+		log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:257')
+		local player_index = element.player_index
+		local values = data[player_index]
 
-        if value == nil then
-            if not values then
-                return
-            end
+		if value == nil then
+			if not values then
+				log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:263')
+				return
+			end
 
-            local index = element.index
-            values[index] = nil
-            element_map[index] = nil
+			local index = element.index
+			values[index] = nil
+			element_map[index] = nil
 
-            if next(values) == nil then
-                data[player_index] = nil
-            end
-        else
-            if not values then
-                values = {}
-                data[player_index] = values
-            end
+			if next(values) == nil then
+				data[player_index] = nil
+			end
+		else
+			if not values then
+				values = {}
+				data[player_index] = values
+			end
 
-            local index = element.index
-            values[index] = value
-            element_map[index] = element
-        end
-    end
-    set_data = Gui.set_data
+			local index = element.index
+			values[index] = value
+			element_map[index] = element
+		end
+	end
+	set_data = Gui.set_data
 
-    function Gui.data()
-        return data
-    end
+	function Gui.data()
+		log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:286')
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:287')
+		return data
+	end
 
-    function Gui.element_map()
-        return element_map
-    end
+	function Gui.element_map()
+		log('Func start /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:290')
+		log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:291')
+		return element_map
+	end
 end
 
+log('Func ret /Users/drbuttons/git/Factorio-Biter-Battles/utils/gui.lua:295')
 return Gui

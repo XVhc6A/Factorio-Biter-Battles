@@ -14,4 +14,5 @@ local t = {
 	["big-worm-turret"] = 64,
 	["behemoth-worm-turret"] = 128,
 }
+log('Func ret /Users/dan.farrell/git/Factorio-Biter-Battles/modules/wave_defense/threat_values.lua:16')
 return t
