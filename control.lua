@@ -44,6 +44,44 @@ if _DUMP_ENV then
     require 'utils.dump_env'
 end
 
+--------------------- REFACTOR HERE ---------------------------
+----- Follow Krastorio 2 format
+-- See: https://github.com/raiguard/Krastorio2/blob/master/control.lua
+-- They use local's in control to aggregate and define script.on_events
+
+
+
+local Antigrief = require("antigrief")
+local ComfyPanelScore = require("comfy_panel.score")
+local Terrain = require("maps.biter_battles_v2.terrain")
+local AiTargets = require("maps.biter_battles_v2.ai_targets")
+
+-- ENTITY
+
+script.on_event(defines.events.on_player_mined_entity, function(event)
+	local entity = event.entity
+	if not entity or not entity.valid then
+		return
+	end
+	AiTargets.stop_tracking(entity)
+
+	local player = game.get_player(event.player_index)
+	if player and player.valid then
+		if Antigrief.enabled then
+			Antigrief.on_player_mined_entity(entity, player)
+		end
+		ComfyPanelScore.on_player_mined_entity(entity, player)
+
+		Terrain.minable_wrecks(entity, player)
+	end
+end)
+
+--------------------- END REFACTOR HERE -----------------------
+
+
+
+---
+
 local function on_player_created(event)
     local player = game.players[event.player_index]
     player.gui.top.style = 'slot_table_spacing_horizontal_flow'
