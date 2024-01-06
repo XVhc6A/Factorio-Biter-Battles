@@ -1,5 +1,5 @@
 --luacheck: globals table
-local Stats = require 'utils.stats'
+local Stats = require("utils.stats")
 local random = math.random
 local floor = math.floor
 local remove = table.remove
@@ -11,12 +11,12 @@ local table_size = table_size
 -- @param t <table> to search
 -- @param <any> table element to search for
 function table.remove_element(t, element)
-    for k, v in pairs(t) do
-        if v == element then
-            remove(t, k)
-            break
-        end
-    end
+	for k, v in pairs(t) do
+		if v == element then
+			remove(t, k)
+			break
+		end
+	end
 end
 
 --- Removes an item from an array in O(1) time.
@@ -24,27 +24,27 @@ end
 -- @param tbl <table> arrayed table
 -- @param index <number> Must be >= 0. The case where index > #tbl is handled.
 function table.fast_remove(tbl, index)
-    local count = #tbl
-    if index > count then
-        return
-    elseif index < count then
-        tbl[index] = tbl[count]
-    end
+	local count = #tbl
+	if index > count then
+		return
+	elseif index < count then
+		tbl[index] = tbl[count]
+	end
 
-    tbl[count] = nil
+	tbl[count] = nil
 end
 
 --- Adds the contents of table t2 to table t1
 -- @param t1 <table> to insert into
 -- @param t2 <table> to insert from
 function table.add_all(t1, t2)
-    for k, v in pairs(t2) do
-        if tonumber(k) then
-            t1[#t1 + 1] = v
-        else
-            t1[k] = v
-        end
-    end
+	for k, v in pairs(t2) do
+		if tonumber(k) then
+			t1[#t1 + 1] = v
+		else
+			t1[k] = v
+		end
+	end
 end
 
 --- Checks if a table contains an element
@@ -52,12 +52,12 @@ end
 -- @param e <any> table element
 -- @returns <any> the index of the element or nil
 function table.index_of(t, e)
-    for k, v in pairs(t) do
-        if v == e then
-            return k
-        end
-    end
-    return nil
+	for k, v in pairs(t) do
+		if v == e then
+			return k
+		end
+	end
+	return nil
 end
 
 --- Checks if the arrayed portion of a table contains an element
@@ -65,12 +65,12 @@ end
 -- @param e <any> table element
 -- @returns <number|nil> the index of the element or nil
 function table.index_of_in_array(t, e)
-    for i = 1, #t do
-        if t[i] == e then
-            return i
-        end
-    end
-    return nil
+	for i = 1, #t do
+		if t[i] == e then
+			return i
+		end
+	end
+	return nil
 end
 
 local index_of = table.index_of
@@ -79,7 +79,7 @@ local index_of = table.index_of
 -- @param e <any> table element
 -- @returns <boolean> indicating success
 function table.contains(t, e)
-    return index_of(t, e) and true or false
+	return index_of(t, e) and true or false
 end
 
 local index_of_in_array = table.index_of_in_array
@@ -88,7 +88,7 @@ local index_of_in_array = table.index_of_in_array
 -- @param e <any> table element
 -- @returns <boolean> indicating success
 function table.array_contains(t, e)
-    return index_of_in_array(t, e) and true or false
+	return index_of_in_array(t, e) and true or false
 end
 
 --- Adds an element into a specific index position while shuffling the rest down
@@ -96,29 +96,29 @@ end
 -- @param index <number> the position in the table to add to
 -- @param element <any> to add to the table
 function table.set(t, index, element)
-    local i = 1
-    for k in pairs(t) do
-        if i == index then
-            t[k] = element
-            return nil
-        end
-        i = i + 1
-    end
-    error('Index out of bounds', 2)
+	local i = 1
+	for k in pairs(t) do
+		if i == index then
+			t[k] = element
+			return nil
+		end
+		i = i + 1
+	end
+	error("Index out of bounds", 2)
 end
 
 --- Returns an array of keys for a table.
 --@param tbl <table>
 function table.keys(tbl)
-    local n = 1
-    local keys = {}
+	local n = 1
+	local keys = {}
 
-    for k in pairs(tbl) do
-        keys[n] = k
-        n = n + 1
-    end
+	for k in pairs(tbl) do
+		keys[n] = k
+		n = n + 1
+	end
 
-    return keys
+	return keys
 end
 
 --- Chooses a random entry from a table
@@ -127,18 +127,18 @@ end
 -- @param key <boolean> to indicate whether to return the key or value
 -- @return <any> a random element of table t
 function table.get_random_dictionary_entry(t, key)
-    local target_index = random(1, table_size(t))
-    local count = 1
-    for k, v in pairs(t) do
-        if target_index == count then
-            if key then
-                return k
-            else
-                return v
-            end
-        end
-        count = count + 1
-    end
+	local target_index = random(1, table_size(t))
+	local count = 1
+	for k, v in pairs(t) do
+		if target_index == count then
+			if key then
+				return k
+			else
+				return v
+			end
+		end
+		count = count + 1
+	end
 end
 
 --- Chooses a random entry from a weighted table
@@ -149,22 +149,22 @@ end
 -- @return <any> table element
 -- @see features.chat_triggers::hodor
 function table.get_random_weighted(weighted_table, item_index, weight_index)
-    local total_weight = 0
-    item_index = item_index or 1
-    weight_index = weight_index or 2
+	local total_weight = 0
+	item_index = item_index or 1
+	weight_index = weight_index or 2
 
-    for _, w in pairs(weighted_table) do
-        total_weight = total_weight + w[weight_index]
-    end
+	for _, w in pairs(weighted_table) do
+		total_weight = total_weight + w[weight_index]
+	end
 
-    local index = random() * total_weight
-    local weight_sum = 0
-    for _, w in pairs(weighted_table) do
-        weight_sum = weight_sum + w[weight_index]
-        if weight_sum >= index then
-            return w[item_index]
-        end
-    end
+	local index = random() * total_weight
+	local weight_sum = 0
+	for _, w in pairs(weighted_table) do
+		weight_sum = weight_sum + w[weight_index]
+		if weight_sum >= index then
+			return w[item_index]
+		end
+	end
 end
 
 --- Returns a table with % chance values for each item of a weighted_table
@@ -172,16 +172,16 @@ end
 -- @param item_index <number> of the index of items, defaults to 1
 -- @param weight_index <number> of the index of the weights, defaults to 2
 function table.get_random_weighted_chances(weighted_table, item_index, weight_index)
-    local total_weight = 0
-    item_index = item_index or 1
-    weight_index = weight_index or 2
-    for _, v in pairs(weighted_table) do
-        total_weight = total_weight + v[weight_index]
-    end
+	local total_weight = 0
+	item_index = item_index or 1
+	weight_index = weight_index or 2
+	for _, v in pairs(weighted_table) do
+		total_weight = total_weight + v[weight_index]
+	end
 	local chance_table = {}
 	for k, v in pairs(weighted_table) do
-        chance_table[k] = v[weight_index] / total_weight
-    end
+		chance_table[k] = v[weight_index] / total_weight
+	end
 	return chance_table
 end
 
@@ -190,33 +190,33 @@ end
 -- from: http://www.sdknews.com/cross-platform/corona/tutorial-how-to-shuffle-table-items
 -- @param t <table> to shuffle
 function table.shuffle_table(t, rng)
-    local rand = rng or math.random
-    local iterations = #t
-    if iterations == 0 then
-        error('Not a sequential table')
-        return
-    end
-    local j
+	local rand = rng or math.random
+	local iterations = #t
+	if iterations == 0 then
+		error("Not a sequential table")
+		return
+	end
+	local j
 
-    for i = iterations, 2, -1 do
-        j = rand(i)
-        t[i], t[j] = t[j], t[i]
-    end
+	for i = iterations, 2, -1 do
+		j = rand(i)
+		t[i], t[j] = t[j], t[i]
+	end
 end
 
 --- Clears all existing entries in a table
 -- @param t <table> to clear
 -- @param array <boolean> to indicate whether the table is an array or not
 function table.clear_table(t, array)
-    if array then
-        for i = 1, #t do
-            t[i] = nil
-        end
-    else
-        for i in pairs(t) do
-            t[i] = nil
-        end
-    end
+	if array then
+		for i = 1, #t do
+			t[i] = nil
+		end
+	else
+		for i in pairs(t) do
+			t[i] = nil
+		end
+	end
 end
 
 --[[
@@ -236,32 +236,32 @@ end
   end
 ]]
 function table.binary_search(t, target)
-    --For some reason bit32.bnot doesn't return negative numbers so I'm using ~x = -1 - x instead.
+	--For some reason bit32.bnot doesn't return negative numbers so I'm using ~x = -1 - x instead.
 
-    local lower = 1
-    local upper = #t
+	local lower = 1
+	local upper = #t
 
-    if upper == 0 then
-        return -2 -- ~1
-    end
+	if upper == 0 then
+		return -2 -- ~1
+	end
 
-    repeat
-        local mid = floor((lower + upper) * 0.5)
-        local value = t[mid]
-        if value == target then
-            return mid
-        elseif value < target then
-            lower = mid + 1
-        else
-            upper = mid - 1
-        end
-    until lower > upper
+	repeat
+		local mid = floor((lower + upper) * 0.5)
+		local value = t[mid]
+		if value == target then
+			return mid
+		elseif value < target then
+			lower = mid + 1
+		else
+			upper = mid - 1
+		end
+	until lower > upper
 
-    return -1 - lower -- ~lower
+	return -1 - lower -- ~lower
 end
 
 -- add table-related functions that exist in base factorio/util to the 'table' table
-require 'util'
+require("util")
 
 --- Similar to serpent.block, returns a string with a pretty representation of a table.
 -- Notice: This method is not appropriate for saving/restoring tables. It is meant to be used by the programmer mainly while debugging a program.
@@ -271,7 +271,7 @@ require 'util'
 -- process is a function which allow altering the passed object before transforming it into a string.
 -- A typical way to use it would be to remove certain values so that they don't appear at all.
 -- return <string> the prettied table
-table.inspect = require 'utils.inspect'
+table.inspect = require("utils.inspect")
 
 --- Takes a table and returns the number of entries in the table. (Slower than #table, faster than iterating via pairs)
 table.size = table_size

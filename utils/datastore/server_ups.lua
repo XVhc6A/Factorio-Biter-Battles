@@ -1,62 +1,56 @@
-local Server = require 'utils.server'
-local GUI = require 'utils.gui'
-local Event = require 'utils.event'
-local Color = require 'utils.color_presets'
+local Server = require("utils.server")
+local GUI = require("utils.gui")
+local Event = require("utils.event")
+local Color = require("utils.color_presets")
 
 local ups_label = GUI.uid_name()
 
 local function validate_player(player)
-    if not player then
-        return false
-    end
-    if not player.valid then
-        return false
-    end
-    return true
+	if not player then
+		return false
+	end
+	if not player.valid then
+		return false
+	end
+	return true
 end
 
 local function set_location(player)
-    local gui = player.gui
-    local label = gui.screen[ups_label]
-    if not label or not label.valid then
-        return
-    end
-    local res = player.display_resolution
-    local uis = player.display_scale
-    label.location = {x = res.width - 423 * uis, y = 30 * uis}
+	local gui = player.gui
+	local label = gui.screen[ups_label]
+	if not label or not label.valid then
+		return
+	end
+	local res = player.display_resolution
+	local uis = player.display_scale
+	label.location = { x = res.width - 423 * uis, y = 30 * uis }
 end
 
 local function create_label(player)
-    local ups = Server.get_ups()
-    local sUPS = 'SUPS = ' .. ups
+	local ups = Server.get_ups()
+	local sUPS = "SUPS = " .. ups
 
-    local label =
-        player.gui.screen.add(
-        {
-            type = 'label',
-            name = ups_label,
-            caption = sUPS
-        }
-    )
-    local style = label.style
-    style.font = 'default-game'
-    return label
+	local label = player.gui.screen.add({
+		type = "label",
+		name = ups_label,
+		caption = sUPS,
+	})
+	local style = label.style
+	style.font = "default-game"
+	return label
 end
 
-Event.add(
-    defines.events.on_player_joined_game,
-    function(event)
-        local player = game.get_player(event.player_index)
+Event.add(defines.events.on_player_joined_game, function(event)
+	local player = game.get_player(event.player_index)
 
-        local label = player.gui.screen[ups_label]
+	local label = player.gui.screen[ups_label]
 
-        if not label or not label.valid then
-            label = create_label(player)
-        end
-        set_location(player)
-        label.visible = false
-    end
-)
+	if not label or not label.valid then
+		label = create_label(player)
+	end
+	set_location(player)
+	label.visible = false
+end)
 -- no wrapper
 -- Update the value each second
 --Event.on_nth_tick(
@@ -76,48 +70,38 @@ Event.add(
 --    end
 --)
 
-commands.add_command(
-    'server-ups',
-    'Toggle the server UPS display!',
-    function()
-        local player = game.player
+commands.add_command("server-ups", "Toggle the server UPS display!", function()
+	local player = game.player
 
-        local secs = Server.get_current_time()
+	local secs = Server.get_current_time()
 
-        if validate_player(player) then
-            if not secs then
-                return player.print('Not running on Comfy backend.', Color.warning)
-            end
+	if validate_player(player) then
+		if not secs then
+			return player.print("Not running on Comfy backend.", Color.warning)
+		end
 
-            local label = player.gui.screen[ups_label]
-            if not label or not label.valid then
-                label = create_label(player)
-            end
+		local label = player.gui.screen[ups_label]
+		if not label or not label.valid then
+			label = create_label(player)
+		end
 
-            if label.visible then
-                label.visible = false
-                player.print('Removed Server-UPS label.', Color.warning)
-            else
-                label.visible = true
-                set_location(player)
-                player.print('Added Server-UPS label.', Color.success)
-            end
-        end
-    end
-)
+		if label.visible then
+			label.visible = false
+			player.print("Removed Server-UPS label.", Color.warning)
+		else
+			label.visible = true
+			set_location(player)
+			player.print("Added Server-UPS label.", Color.success)
+		end
+	end
+end)
 
-Event.add(
-    defines.events.on_player_display_resolution_changed,
-    function(event)
-        local player = game.get_player(event.player_index)
-        set_location(player)
-    end
-)
+Event.add(defines.events.on_player_display_resolution_changed, function(event)
+	local player = game.get_player(event.player_index)
+	set_location(player)
+end)
 
-Event.add(
-    defines.events.on_player_display_scale_changed,
-    function(event)
-        local player = game.get_player(event.player_index)
-        set_location(player)
-    end
-)
+Event.add(defines.events.on_player_display_scale_changed, function(event)
+	local player = game.get_player(event.player_index)
+	set_location(player)
+end)

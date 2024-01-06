@@ -1,6 +1,6 @@
 -- Minimal FIFO implementation. It guarantees constant insertion and erase
 -- times. It uses pool allocator to amortize cost of garbage collection.
-local pool = require "maps.biter_battles_v2.pool"
+local pool = require("maps.biter_battles_v2.pool")
 local mod = {}
 
 function mod.init()
@@ -38,8 +38,7 @@ function mod.push(id, val)
 	local idx = global.fifo_idx[id]
 	local size = global.fifo_capacity[id]
 	if size < idx then
-		global.fifo_store[id] = pool.enlarge(global.fifo_store[id],
-						     size, 100)
+		global.fifo_store[id] = pool.enlarge(global.fifo_store[id], size, 100)
 		global.fifo_capacity[id] = global.fifo_capacity[id] + 100
 	end
 
