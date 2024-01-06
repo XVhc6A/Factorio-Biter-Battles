@@ -40,6 +40,7 @@ end
 
 -- Hash lookup table as defined by Ken Perlin
 -- This is a randomly arranged array of all numbers from 0-255 inclusive
+-- stylua: ignore
 local permutation =
     loadstring(
     decode(
