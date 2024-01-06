@@ -1,7 +1,7 @@
 local Public = {}
 
-local AiTargets = require "maps.biter_battles_v2.ai_targets"
-local terrain = require "maps.biter_battles_v2.terrain"
+local AiTargets = require("maps.biter_battles_v2.ai_targets")
+local terrain = require("maps.biter_battles_v2.terrain")
 local table_remove = table.remove
 local table_insert = table.insert
 
@@ -17,11 +17,11 @@ local direction_translation = {
 }
 
 local function clear_entities(surface, bb)
-	objects = surface.find_entities_filtered {
+	objects = surface.find_entities_filtered({
 		area = bb,
-		name = 'character',
+		name = "character",
 		invert = true,
-	}
+	})
 
 	for _, object in pairs(objects) do
 		object.destroy()
@@ -46,7 +46,7 @@ function Public.clone(event)
 		clear_destination_entities = false,
 		clear_destination_decoratives = true,
 		create_build_effect_smoke = false,
-		expand_map = true
+		expand_map = true,
 	}
 
 	if source_bb.left_top.y < 0 then
@@ -81,12 +81,16 @@ function Public.invert_entity(event)
 		destination.force = "south_biters"
 	end
 
-	if destination.name == "rocket-silo" and math.abs(destination.position.y) < 150 and math.abs(destination.position.x) < 100 then
+	if
+		destination.name == "rocket-silo"
+		and math.abs(destination.position.y) < 150
+		and math.abs(destination.position.x) < 100
+	then
 		global.rocket_silo[destination.force.name] = destination
 		AiTargets.start_tracking(destination)
 	elseif destination.name == "gun-turret" then
 		AiTargets.start_tracking(destination)
-	elseif destination.name == "spitter-spawner" or destination.name == 'biter-spawner' then
+	elseif destination.name == "spitter-spawner" or destination.name == "biter-spawner" then
 		table_insert(global.unit_spawners[destination.force.name], destination)
 	end
 
@@ -113,49 +117,47 @@ end
 function Public.remove_hidden_tiles(event)
 	local bb = event.destination_area
 	local surface = event.destination_surface
-	local to_remove = surface.find_tiles_filtered {
+	local to_remove = surface.find_tiles_filtered({
 		area = bb,
 		has_hidden_tile = true,
-		name = "refined-concrete"
-	}
+		name = "refined-concrete",
+	})
 
 	for i, tile in pairs(to_remove) do
-		if not tile.valid then goto remove_hidden_cont end
-		local pos_opposite_tile = surface.get_tile(tile.position.x,-tile.position.y-1).position
-		surface.set_hidden_tile(tile.position, surface.get_hidden_tile(pos_opposite_tile))
+		if tile.valid then
+			local pos_opposite_tile = surface.get_tile(tile.position.x, -tile.position.y - 1).position
+			surface.set_hidden_tile(tile.position, surface.get_hidden_tile(pos_opposite_tile))
+		end
 		::remove_hidden_cont::
 	end
 end
 
 function Public.invert_tiles(event)
 	local surface = event.destination_surface
-	local to_emplace = surface.find_tiles_filtered {
-		area = event.source_area
-	}
+	local to_emplace = surface.find_tiles_filtered({
+		area = event.source_area,
+	})
 
 	local tiles = {}
 	for i, tile in pairs(to_emplace) do
-		if not tile.valid then goto invert_tile_continue end
-
-		local pos = tile.position
-		pos.y = -pos.y - 1
-		tiles[i] = {
-			position = pos,
-			name = tile.name
-		}
-
-		::invert_tile_continue::
+		if tile.valid then
+			local pos = tile.position
+			pos.y = -pos.y - 1
+			tiles[i] = {
+				position = pos,
+				name = tile.name,
+			}
+		end
 	end
 
 	surface.set_tiles(tiles)
 end
 
-
 function Public.invert_decoratives(event)
 	local surface = event.destination_surface
-	local src_decoratives = surface.find_decoratives_filtered {
-		area = event.source_area
-	}
+	local src_decoratives = surface.find_decoratives_filtered({
+		area = event.source_area,
+	})
 
 	local dest_decoratives = {}
 	for i, d in pairs(src_decoratives) do
@@ -164,11 +166,11 @@ function Public.invert_decoratives(event)
 		dest_decoratives[i] = {
 			amount = d.amount,
 			position = pos,
-			name = d.decorative.name
+			name = d.decorative.name,
 		}
 	end
 
-	surface.create_decoratives{check_collision = false, decoratives = dest_decoratives}
+	surface.create_decoratives({ check_collision = false, decoratives = dest_decoratives })
 end
 
 return Public

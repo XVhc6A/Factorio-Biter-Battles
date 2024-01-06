@@ -11,50 +11,50 @@ local counter = 0
 -- @param  var<any>
 -- @return number the unique token for the variable.
 function Token.register(var)
-    if _LIFECYCLE == 8 then
-        error('Calling Token.register after on_init() or on_load() has run is a desync risk.', 2)
-    end
+	if _LIFECYCLE == 8 then
+		error("Calling Token.register after on_init() or on_load() has run is a desync risk.", 2)
+	end
 
-    counter = counter + 1
+	counter = counter + 1
 
-    tokens[counter] = var
+	tokens[counter] = var
 
-    return counter
+	return counter
 end
 --- Returns current counter
 -- Helpful for recurrent functions
 function Token.get_counter()
-    return counter
+	return counter
 end
 
 function Token.get(token_id)
-    return tokens[token_id]
+	return tokens[token_id]
 end
 
 global.tokens = {}
 
 function Token.register_global(var)
-    local c = #global.tokens + 1
+	local c = #global.tokens + 1
 
-    global.tokens[c] = var
+	global.tokens[c] = var
 
-    return c
+	return c
 end
 
 function Token.get_global(token_id)
-    return global.tokens[token_id]
+	return global.tokens[token_id]
 end
 
 function Token.set_global(token_id, var)
-    global.tokens[token_id] = var
+	global.tokens[token_id] = var
 end
 
 local uid_counter = 100
 
 function Token.uid()
-    uid_counter = uid_counter + 1
+	uid_counter = uid_counter + 1
 
-    return uid_counter
+	return uid_counter
 end
 
 return Token

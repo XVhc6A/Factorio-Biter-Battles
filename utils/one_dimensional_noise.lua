@@ -10,19 +10,23 @@ function get_noise(x, seed)
 	local index = math_floor(x % 255) + 1
 	local h1 = heights[index]
 	local h2 = heights[index + 1]
-	if not h2 then h2 = heights[1] end
-	
+	if not h2 then
+		h2 = heights[1]
+	end
+
 	local floaty = (x - math_floor(x))
-	if not floaty then return h1 end
-	
+	if not floaty then
+		return h1
+	end
+
 	local vector = h2 - h1
 	local vector_pos = vector * floaty
 	vector_pos = vector_pos * (vector_pos / vector)
-	
+
 	local n = h1 + vector_pos
 
 	n = n / 255
-	
+
 	return n
 end
 
@@ -31,8 +35,17 @@ function testnoise()
 	local seed = math.random(1, 1000000)
 	for x = -256, 256, 1 do
 		local noise = get_noise(x / 64, seed)
-		local entity = surface.create_entity({name = "stone-wall", position = {x, noise * 32}, force = "player"})
-		rendering.draw_text{text=math.round(noise, 4), surface=surface, target=entity, target_offset={0,0}, color={0,255,0}, scale=0.88, font=default, orientation = 0.75}
+		local entity = surface.create_entity({ name = "stone-wall", position = { x, noise * 32 }, force = "player" })
+		rendering.draw_text({
+			text = math.round(noise, 4),
+			surface = surface,
+			target = entity,
+			target_offset = { 0, 0 },
+			color = { 0, 255, 0 },
+			scale = 0.88,
+			font = default,
+			orientation = 0.75,
+		})
 	end
 end
 

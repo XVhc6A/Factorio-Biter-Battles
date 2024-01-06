@@ -1,10 +1,16 @@
--- changelog tab -- 
-local Tabs = require 'comfy_panel.main'
+-- changelog tab --
+local Tabs = require("comfy_panel.main")
 
 local function add_changelog(player, element)
-	local changelog_scrollpanel = element.add { type = "scroll-pane", name = "scroll_pane", direction = "vertical", horizontal_scroll_policy = "never", vertical_scroll_policy = "auto"}
+	local changelog_scrollpanel = element.add({
+		type = "scroll-pane",
+		name = "scroll_pane",
+		direction = "vertical",
+		horizontal_scroll_policy = "never",
+		vertical_scroll_policy = "auto",
+	})
 	changelog_scrollpanel.style.maximal_height = 530
-	
+
 	local changelog_change = {}
 	local function add_entry(date, who, what)
 		table.insert(changelog_change, date)
@@ -18,7 +24,11 @@ local function add_changelog(player, element)
 	add_entry("2023-12-20", "gsquaredxc", "Reset game speed to 1 after silo death")
 	add_entry("2023-12-20", "cogito123", "perf : Optimize river generation")
 	add_entry("2023-12-20", "developer-8", "fix decontruction on island working on only half of the island")
-	add_entry("2023-12-20", "developer-8", "instant map reset can be done during map reroll + default yes map reroll + added possibility cancel map reroll")
+	add_entry(
+		"2023-12-20",
+		"developer-8",
+		"instant map reset can be done during map reroll + default yes map reroll + added possibility cancel map reroll"
+	)
 	add_entry("2023-12-20", "cliff_build", "Add comment documenting advantage of sending science in large batches")
 	add_entry("2023-12-03", "cliff_build", "Small code simplification in changelog code")
 	add_entry("2023-12-03", "developer-8", "Separate special games into individual files")
@@ -26,7 +36,11 @@ local function add_changelog(player, element)
 	add_entry("2023-11-29", "cliff_build", "Add a spectator-force log message about which team completed a research")
 	add_entry("2023-11-27", "Ragnarok77", "Decreased red /green and increased mil/blue science values")
 	add_entry("2023-11-27", "BigFatDuck", "fix boss units not traveling with the pack")
-	add_entry("2023-11-16", "Ragnarok77", "Bugfix : ignore works now even if different forces or /sth , /nth or /s used")
+	add_entry(
+		"2023-11-16",
+		"Ragnarok77",
+		"Bugfix : ignore works now even if different forces or /sth , /nth or /s used"
+	)
 	add_entry("2023-11-16", "Ragnarok77", "Bugfix : total playtime is now logged")
 	add_entry("2023-11-16", "Ragnarok77", "New feature : Add /save-quickbar and /load-quickbar commands")
 	add_entry("2023-11-03", "DrButtons", "Add instant map reset command with optional seed argument")
@@ -44,8 +58,16 @@ local function add_changelog(player, element)
 	add_entry("2023-10-03", "PlayerNoon", "Special game disable sciences from sending")
 	add_entry("2023-09-29", "penguinencounter", "Improved /inventory performance")
 	add_entry("2023-07-20", "developer-8", "Allow change_active_item_group_for_filters for spectators")
-	add_entry("2023-07-14", "developer-8", "Allows group name and description to include spaces and punctuation characters")
-	add_entry("2023-07-14", "Ragnarok77", "Set permission selected_tab_changed to true even when frozen so ui not broken anymore for special/groups")
+	add_entry(
+		"2023-07-14",
+		"developer-8",
+		"Allows group name and description to include spaces and punctuation characters"
+	)
+	add_entry(
+		"2023-07-14",
+		"Ragnarok77",
+		"Set permission selected_tab_changed to true even when frozen so ui not broken anymore for special/groups"
+	)
 	add_entry("2023-07-13", "DrButtons", "Remove Unused Module and terrain code")
 	add_entry("2023-07-13", "TheBigZet", "Clear area of rocks for placing silo's turret pair (redo)")
 	add_entry("2023-06-29", "gabrielchl", "feat: add send to server in admin gui")
@@ -70,21 +92,33 @@ local function add_changelog(player, element)
 	add_entry("2022-10-25", "Ragnarok77", "French translation of welcome message")
 	add_entry("2022-09-12", "TheBigZet", "Develop to master")
 	add_entry("2022-09-11", "TheBigZet", "Dev backport")
-	add_entry("2022-09-11", "Ragnarok77", "Fix threat boss issue going negative too often (waves were oversized) and frozen boss bug and added boss announce")
+	add_entry(
+		"2022-09-11",
+		"Ragnarok77",
+		"Fix threat boss issue going negative too often (waves were oversized) and frozen boss bug and added boss announce"
+	)
 	add_entry("2022-08-27", "TheBigZet", "New histories")
 	add_entry("2022-08-06", "TheBigZet", "Added path to errors from event_core")
 	add_entry("2022-08-06", "Ragnarok77", "Show big threat value with k or m at end of text")
 	add_entry("2022-08-06", "TheBigZet", "Enabled editor and config in spectator")
 	add_entry("2022-08-05", "developer-8", "Fix spectator in vehicle")
 	add_entry("2022-08-05", "developer-8", "Fix ghost rotation by spectator")
-	add_entry("2022-08-05", "Ragnarok77", "Ura ammo and kovarex researched when ura processing is researched, same for gate with wall")
+	add_entry(
+		"2022-08-05",
+		"Ragnarok77",
+		"Ura ammo and kovarex researched when ura processing is researched, same for gate with wall"
+	)
 	add_entry("2022-07-30", "Ragnarok77", "Prevent pathfinder crossing river(made by developer-8, not Ragnarok77)")
 	add_entry("2022-07-30", "AwesomePatrol", "perf: Small improvements to biter reanimation logic")
 	add_entry("2022-07-30", "TheBigZet", "Disabled polls")
 	add_entry("2022-06-25", "Ragnarok77", "Perf : No find entities used when defense are built are far from nest")
 	add_entry("2022-06-25", "TheBigZet", "Added mixed send functionality")
 	add_entry("2022-06-25", "Ragnarok77", "Anti afk system")
-	add_entry("2022-06-25", "Ragnarok77", "Global speaker won't nuke speakers in jail and jail speaker heard by all forces")
+	add_entry(
+		"2022-06-25",
+		"Ragnarok77",
+		"Global speaker won't nuke speakers in jail and jail speaker heard by all forces"
+	)
 	add_entry("2022-06-09", "Ragnarok77", "Implementation of boss")
 	add_entry("2022-06-09", "mysticamber", "Backport")
 	add_entry("2022-05-31", "Ragnarok77", "added launch silo sentence in welcome message")
@@ -143,7 +177,11 @@ local function add_changelog(player, element)
 	add_entry("2021-09-19", "gabrielchl", "Print msg to admin upon offshore pump mining")
 	add_entry("2021-09-19", "mysticamber", "spying-fix: if you've chosen a team, remove space sci button")
 	add_entry("2021-09-14", "mysticamber", "discord-log-shout: log shout messages to discord")
-	add_entry("2021-08-31", "mysticamber", "we-survivor: automate sending ppl to spec. Make the delay to return to team configurable")
+	add_entry(
+		"2021-08-31",
+		"mysticamber",
+		"we-survivor: automate sending ppl to spec. Make the delay to return to team configurable"
+	)
 	add_entry("2021-08-13", "AwesomePatrol", "Fix evo reset when admins change difficulty")
 	add_entry("2021-08-13", "mysticamber", "Add comment to clear_copy_history")
 	add_entry("2021-07-24", "mysticamber", "clear-bp-history: overwrite copy history with miner")
@@ -161,7 +199,11 @@ local function add_changelog(player, element)
 	add_entry("2021-05-22", "cogito123", "Remove additional teleport during game over phase")
 	add_entry("2021-05-20", "cogito123", "Force chunk replication into lockstep")
 	add_entry("2021-05-17", "cogito123", "Improvement to map generation performance")
-	add_entry("2021-05-15", "AwesomePatrol", "Always use a standard team name in post-game discord message (and more QoL stuff)")
+	add_entry(
+		"2021-05-15",
+		"AwesomePatrol",
+		"Always use a standard team name in post-game discord message (and more QoL stuff)"
+	)
 	add_entry("2021-05-15", "AwesomePatrol", "Add two wood to inventory like in vanilla")
 	add_entry("2021-05-09", "1pulse", "More improvements 1")
 	add_entry("2021-05-09", "Hornwitser", "Revert #140")
@@ -231,7 +273,11 @@ local function add_changelog(player, element)
 	add_entry("2020-12-29", "thePiedPiper13", "Updated discord link to never expire and put at top of info")
 	add_entry("2020-12-27", "mysticamber", "Centralize ammo modifier values")
 	add_entry("2020-12-27", "kajendra", "Fixed typos & unused variables")
-	add_entry("2020-12-27", "kajendra", "Updated Readme File with formatting, added Testing Instructions & modified text on PR's")
+	add_entry(
+		"2020-12-27",
+		"kajendra",
+		"Updated Readme File with formatting, added Testing Instructions & modified text on PR's"
+	)
 	add_entry("2020-12-27", "guymaor86", "Pull request template")
 	add_entry("2020-12-27", "St4telyRaven", "Update init.lua")
 	add_entry("2020-12-27", "mysticamber", "Prevent bots from tiling")
@@ -240,7 +286,11 @@ local function add_changelog(player, element)
 	add_entry("2020-12-22", "St4telyRaven", "Update difficulty_vote.lua")
 	add_entry("2020-12-22", "St4telyRaven", "Update tables.lua")
 	add_entry("2020-12-22", "St4telyRaven", "Update difficulty_vote.lua")
-	add_entry("2020-12-21", "mysticamber", "issue-36: chatbot - on_console_chat - remove get server time as it causes problems")
+	add_entry(
+		"2020-12-21",
+		"mysticamber",
+		"issue-36: chatbot - on_console_chat - remove get server time as it causes problems"
+	)
 	add_entry("2020-12-20", "St4telyRaven", "Update ai.lua")
 	add_entry("2020-12-20", "1pulse", "put back normal values for nades")
 	add_entry("2020-12-20", "mysticamber", "bb: adding evo threat and player list to end of game messages")
@@ -255,7 +305,11 @@ local function add_changelog(player, element)
 	add_entry("2020-12-14", "DashCee", "File text updates")
 	add_entry("2020-12-11", "mysticamber", "biter-battles: adding north-chat and south-chat commands")
 	add_entry("2020-12-11", "mysticamber", "Contributing to repo")
-	add_entry("2020-12-11", "thePiedPiper13", "Updated Biter battles map info (?) description to include 2 guides and the discord server links")
+	add_entry(
+		"2020-12-11",
+		"thePiedPiper13",
+		"Updated Biter battles map info (?) description to include 2 guides and the discord server links"
+	)
 	add_entry("2020-12-10", "DashCee", "Updating readme")
 	add_entry("2020-12-10", "1pulse", "default bbv2")
 	add_entry("2020-12-10", "1pulse", "Update control.lua")
@@ -265,7 +319,11 @@ local function add_changelog(player, element)
 	add_entry("2020-12-10", "DashCee", "Compress difficulty values upwards")
 	add_entry("2020-12-10", "mysticamber", "mixed ore patches: adding multiplier")
 	add_entry("2020-12-10", "mysticamber", "Chat")
-	add_entry("2020-12-10", "mysticamber", "biter-battles: adding option to only send msg to a specific team as a spectator")
+	add_entry(
+		"2020-12-10",
+		"mysticamber",
+		"biter-battles: adding option to only send msg to a specific team as a spectator"
+	)
 	add_entry("2020-12-07", "mysticamber", "biter-battles: difficulty vote - removing hard coded 7 in difficulties")
 	add_entry("2020-11-28", "St4telyRaven", "Update init.lua")
 	add_entry("2020-11-28", "St4telyRaven", "Update terrain.lua")
@@ -275,31 +333,43 @@ local function add_changelog(player, element)
 	add_entry("2020-11-27", "St4telyRaven", "Update functions.lua")
 	add_entry("2020-11-27", "St4telyRaven", "Update tables.lua")
 	add_entry("2020-11-27", "St4telyRaven", "Update ai.lua")
-	
-	local t = changelog_scrollpanel.add { type = "table", name = "changelog_header_table", column_count = 3 }
-	local column_widths = {tonumber(115), tonumber(435), tonumber(230)}
+
+	local t = changelog_scrollpanel.add({ type = "table", name = "changelog_header_table", column_count = 3 })
+	local column_widths = { tonumber(115), tonumber(435), tonumber(230) }
 	local headers = {
 		[1] = "Date",
 		[2] = "Change",
 		[3] = "Author",
 	}
 	for _, w in ipairs(column_widths) do
-	local label = t.add { type = "label", caption = headers[_] }
-	label.style.minimal_width = w
-	label.style.maximal_width = w
-	label.style.font = "default-bold"
-	label.style.font_color = { r=0.98, g=0.66, b=0.22 }
+		local label = t.add({ type = "label", caption = headers[_] })
+		label.style.minimal_width = w
+		label.style.maximal_width = w
+		label.style.font = "default-bold"
+		label.style.font_color = { r = 0.98, g = 0.66, b = 0.22 }
 	end
-	changelog_panel_table = changelog_scrollpanel.add { type = "table", column_count = 3 }
+	changelog_panel_table = changelog_scrollpanel.add({ type = "table", column_count = 3 })
 	if changelog_change then
 		for i = 1, #changelog_change, 3 do
-			local label = changelog_panel_table.add { type = "label", name = "changelog_date" .. i, caption = changelog_change[i] }
+			local label = changelog_panel_table.add({
+				type = "label",
+				name = "changelog_date" .. i,
+				caption = changelog_change[i],
+			})
 			label.style.minimal_width = column_widths[1]
 			label.style.maximal_width = column_widths[1]
-			local label = changelog_panel_table.add { type = "label", name = "changelog_change" .. i, caption = changelog_change[i+1] }
+			local label = changelog_panel_table.add({
+				type = "label",
+				name = "changelog_change" .. i,
+				caption = changelog_change[i + 1],
+			})
 			label.style.minimal_width = column_widths[2]
 			label.style.maximal_width = column_widths[2]
-			local label = changelog_panel_table.add { type = "label", name = "changelog_author" .. i, caption = changelog_change[i+2] }
+			local label = changelog_panel_table.add({
+				type = "label",
+				name = "changelog_author" .. i,
+				caption = changelog_change[i + 2],
+			})
 			label.style.minimal_width = column_widths[3]
 			label.style.maximal_width = column_widths[3]
 		end
@@ -307,18 +377,22 @@ local function add_changelog(player, element)
 end
 
 function comfy_panel_get_active_frame(player)
-	if not player.gui.left.comfy_panel then return false end
-	if not player.gui.left.comfy_panel.tabbed_pane.selected_tab_index then return player.gui.left.comfy_panel.tabbed_pane.tabs[1].content end
-	return player.gui.left.comfy_panel.tabbed_pane.tabs[player.gui.left.comfy_panel.tabbed_pane.selected_tab_index].content 
+	if not player.gui.left.comfy_panel then
+		return false
+	end
+	if not player.gui.left.comfy_panel.tabbed_pane.selected_tab_index then
+		return player.gui.left.comfy_panel.tabbed_pane.tabs[1].content
+	end
+	return player.gui.left.comfy_panel.tabbed_pane.tabs[player.gui.left.comfy_panel.tabbed_pane.selected_tab_index].content
 end
 
-local build_config_gui = (function (player, frame)		
+local build_config_gui = function(player, frame)
 	local frame_changelog = comfy_panel_get_active_frame(player)
 	if not frame_changelog then
 		return
 	end
 	frame_changelog.clear()
 	add_changelog(player, frame_changelog)
-end)
+end
 
-comfy_panel_tabs["Changelog"] = {gui = build_config_gui, admin = false}
+comfy_panel_tabs["Changelog"] = { gui = build_config_gui, admin = false }

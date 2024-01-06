@@ -1,10 +1,10 @@
 local Public = {}
 
-local locale_string = {'', '[PRINT] ', nil}
+local locale_string = { "", "[PRINT] ", nil }
 
 function print(str)
-    locale_string[3] = str
-    log(locale_string)
+	locale_string[3] = str
+	log(locale_string)
 end
 
 local raw_print = print

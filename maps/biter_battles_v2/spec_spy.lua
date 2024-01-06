@@ -1,11 +1,13 @@
-local Global = require "utils.global"
+local Global = require("utils.global")
 
 local this = {
 	-- map player <> force
-	initialForce = {}
+	initialForce = {},
 }
 
-Global.register(this, function (t) this = t end)
+Global.register(this, function(t)
+	this = t
+end)
 
 local function is_spying(player)
 	return this.initialForce[player.index] ~= nil
@@ -47,7 +49,7 @@ local function spy_prod_handler(event)
 	end
 	local elementToForce = {
 		["spy-north-prod"] = "north",
-		["spy-south-prod"] = "south"
+		["spy-south-prod"] = "south",
 	}
 	local force = elementToForce[event.element.name]
 	if force then
@@ -63,7 +65,7 @@ local function spy_tech_handler(event)
 	end
 	local elementToForce = {
 		["spy-north-tech"] = "north",
-		["spy-south-tech"] = "south"
+		["spy-south-tech"] = "south",
 	}
 	local force = elementToForce[event.element.name]
 	if force then
@@ -96,7 +98,7 @@ local function close_tech_handler(event)
 	end
 end
 
-local Event = require 'utils.event'
+local Event = require("utils.event")
 Event.add(defines.events.on_gui_click, spy_prod_handler)
 Event.add(defines.events.on_gui_click, spy_tech_handler)
 Event.add(defines.events.on_gui_closed, close_prod_handler)

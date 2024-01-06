@@ -1,18 +1,18 @@
-local Terrain = require "maps.biter_battles_v2.terrain"
-local Score = require "comfy_panel.score"
-local Tables = require "maps.biter_battles_v2.tables"
-local fifo = require "maps.biter_battles_v2.fifo"
-local Blueprint = require 'maps.biter_battles_v2.blueprints'
+local Terrain = require("maps.biter_battles_v2.terrain")
+local Score = require("comfy_panel.score")
+local Tables = require("maps.biter_battles_v2.tables")
+local fifo = require("maps.biter_battles_v2.fifo")
+local Blueprint = require("maps.biter_battles_v2.blueprints")
 
 local Public = {}
 
-local function createTrollSong(forceName,offset)
+local function createTrollSong(forceName, offset)
 	local bp_string = Blueprint.get_blueprint("jail_song")
-	local jailSurface = game.surfaces['gulag']
-	local bp_entity = jailSurface.create_entity{name = 'item-on-ground', position= offset, stack = 'blueprint'}
+	local jailSurface = game.surfaces["gulag"]
+	local bp_entity = jailSurface.create_entity({ name = "item-on-ground", position = offset, stack = "blueprint" })
 	bp_entity.stack.import_stack(bp_string)
 	local bp_entities = bp_entity.stack.get_blueprint_entities()
-	local bpInfo = {surface = jailSurface, force = forceName, position = offset, force_build = 'true'}
+	local bpInfo = { surface = jailSurface, force = forceName, position = offset, force_build = "true" }
 	local bpResult = bp_entity.stack.build_blueprint(bpInfo)
 	bp_entity.destroy()
 	for k, v in pairs(bpResult) do
@@ -24,14 +24,17 @@ local function createTrollSong(forceName,offset)
 		end
 		v.revive()
 	end
-	local songBuildings = jailSurface.find_entities_filtered{area={{-11+offset.x, -23+offset.y}, {12+offset.x, 25+offset.y}}, name = {
-		"constant-combinator",
-		"decider-combinator", 
-		"substation",
-		"programmable-speaker",
-		"arithmetic-combinator",
-		"electric-energy-interface"
-	}}
+	local songBuildings = jailSurface.find_entities_filtered({
+		area = { { -11 + offset.x, -23 + offset.y }, { 12 + offset.x, 25 + offset.y } },
+		name = {
+			"constant-combinator",
+			"decider-combinator",
+			"substation",
+			"programmable-speaker",
+			"arithmetic-combinator",
+			"electric-energy-interface",
+		},
+	})
 	for k, v in pairs(songBuildings) do
 		v.minable = false
 		v.destructible = false
@@ -68,13 +71,13 @@ function Public.initial_setup()
 	local defs = {
 		defines.input_action.open_blueprint_library_gui,
 		defines.input_action.import_blueprint_string,
-		defines.input_action.launch_rocket
+		defines.input_action.launch_rocket,
 	}
 	local p = game.permissions.get_group("Default")
 	for k, v in pairs(defs) do
 		p.set_allows_action(v, false)
 	end
-	
+
 	p = game.permissions.create_group("spectator")
 	for action_name, _ in pairs(defines.input_action) do
 		p.set_allows_action(defines.input_action[action_name], false)
@@ -112,7 +115,9 @@ function Public.initial_setup()
 		defines.input_action.change_multiplayer_config,
 		defines.input_action.admin_action,
 	}
-	for _, d in pairs(defs) do p.set_allows_action(d, true) end
+	for _, d in pairs(defs) do
+		p.set_allows_action(d, true)
+	end
 
 	global.suspend_time_limit = 3600
 	global.reroll_time_limit = 1800
@@ -122,8 +127,8 @@ function Public.initial_setup()
 	global.ignore_lists = {}
 	global.bb_settings = {
 		--TEAM SETTINGS--
-		["team_balancing"] = true,			--Should players only be able to join a team that has less or equal members than the opposing team?
-		["only_admins_vote"] = false,		--Are only admins able to vote on the global difficulty?
+		["team_balancing"] = true, --Should players only be able to join a team that has less or equal members than the opposing team?
+		["only_admins_vote"] = false, --Are only admins able to vote on the global difficulty?
 		--MAP SETTINGS--
 		["new_year_island"] = false,
 		["bb_map_reveal_toggle"] = true,
@@ -139,14 +144,12 @@ function Public.initial_setup()
 	map_gen_settings.width = 3
 	surface.map_gen_settings = map_gen_settings
 	for chunk in surface.get_chunks() do
-		surface.delete_chunk({chunk.x, chunk.y})
+		surface.delete_chunk({ chunk.x, chunk.y })
 	end
-	createTrollSong(game.forces.south.name,{x=6,y=0})
-	createTrollSong(game.forces.north.name,{x=-40,y=0})
-	createTrollSong(game.forces.spectator.name,{x=-80,y=0})
+	createTrollSong(game.forces.south.name, { x = 6, y = 0 })
+	createTrollSong(game.forces.north.name, { x = -40, y = 0 })
+	createTrollSong(game.forces.spectator.name, { x = -80, y = 0 })
 end
-
-
 
 --Terrain Playground Surface
 function Public.playground_surface()
@@ -157,19 +160,23 @@ function Public.playground_surface()
 	map_gen_settings.water = global.random_generator(15, 65) * 0.01
 	map_gen_settings.starting_area = 2.5
 	map_gen_settings.terrain_segmentation = global.random_generator(30, 40) * 0.1
-	map_gen_settings.cliff_settings = {cliff_elevation_interval = 0, cliff_elevation_0 = 0}
+	map_gen_settings.cliff_settings = { cliff_elevation_interval = 0, cliff_elevation_0 = 0 }
 	map_gen_settings.autoplace_controls = {
-		["coal"] = {frequency = 6.5, size = 0.34, richness = 0.24},
-		["stone"] = {frequency = 6, size = 0.385, richness = 0.25},
-		["copper-ore"] = {frequency = 8.05, size = 0.352, richness = 0.35},
-		["iron-ore"] = {frequency = 8.5, size = 0.8, richness = 0.23},
-		["uranium-ore"] = {frequency = 2.2, size = 1, richness = 1},
-		["crude-oil"] = {frequency = 8, size = 1.4, richness = 0.45},
-		["trees"] = {frequency = global.random_generator(8, 28) * 0.1, size = global.random_generator(6, 14) * 0.1, richness = global.random_generator(2, 4) * 0.1},
-		["enemy-base"] = {frequency = 0, size = 0, richness = 0}
+		["coal"] = { frequency = 6.5, size = 0.34, richness = 0.24 },
+		["stone"] = { frequency = 6, size = 0.385, richness = 0.25 },
+		["copper-ore"] = { frequency = 8.05, size = 0.352, richness = 0.35 },
+		["iron-ore"] = { frequency = 8.5, size = 0.8, richness = 0.23 },
+		["uranium-ore"] = { frequency = 2.2, size = 1, richness = 1 },
+		["crude-oil"] = { frequency = 8, size = 1.4, richness = 0.45 },
+		["trees"] = {
+			frequency = global.random_generator(8, 28) * 0.1,
+			size = global.random_generator(6, 14) * 0.1,
+			richness = global.random_generator(2, 4) * 0.1,
+		},
+		["enemy-base"] = { frequency = 0, size = 0, richness = 0 },
 	}
 	local surface = game.create_surface(global.bb_surface_name, map_gen_settings)
-	surface.request_to_generate_chunks({x = 0, y = -256}, 7)
+	surface.request_to_generate_chunks({ x = 0, y = -256 }, 7)
 	surface.force_generate_chunk_requests()
 	surface.brightness_visual_weights = { -1.17, -0.975, -0.52 }
 end
@@ -177,7 +184,7 @@ end
 function Public.draw_structures()
 	local surface = game.surfaces[global.bb_surface_name]
 	Terrain.draw_spawn_area(surface)
-	if global.active_special_games['mixed_ore_map'] then
+	if global.active_special_games["mixed_ore_map"] then
 		Terrain.draw_mixed_ore_spawn_area(surface)
 	else
 		Terrain.clear_ore_in_main(surface)
@@ -196,10 +203,10 @@ function Public.reveal_map()
 		local height = 500 -- for one side
 		for x = 16, width, 32 do
 			for y = 16, height, 32 do
-				game.forces["spectator"].chart(surface, {{-x, -y}, {-x, -y}})
-				game.forces["spectator"].chart(surface, {{x, -y}, {x, -y}})
-				game.forces["spectator"].chart(surface, {{-x, y}, {-x, y}})
-				game.forces["spectator"].chart(surface, {{x, y}, {x, y}})
+				game.forces["spectator"].chart(surface, { { -x, -y }, { -x, -y } })
+				game.forces["spectator"].chart(surface, { { x, -y }, { x, -y } })
+				game.forces["spectator"].chart(surface, { { -x, y }, { -x, y } })
+				game.forces["spectator"].chart(surface, { { x, y }, { x, y } })
 			end
 		end
 	end
@@ -213,7 +220,7 @@ function Public.tables()
 	global.science_logs_total_south = nil
 	-- Name of main BB surface within game.surfaces
 	-- We hot-swap here between 2 surfaces.
-	if global.bb_surface_name == 'bb0' then
+	if global.bb_surface_name == "bb0" then
 		global.bb_surface_name = "bb1"
 	else
 		global.bb_surface_name = "bb0"
@@ -257,23 +264,43 @@ function Public.tables()
 	global.ai_strikes = {}
 	global.ai_targets = {}
 	global.player_data_afk = {}
-	global.max_group_size_initial = 300							--Maximum unit group size for all biters at start, just used as a reference, doesnt change initial group size.
+	global.max_group_size_initial = 300 --Maximum unit group size for all biters at start, just used as a reference, doesnt change initial group size.
 	global.max_group_size = {}
-	global.max_group_size["north_biters"] = 300							--Maximum unit group size for north biters.
-	global.max_group_size["south_biters"] = 300							--Maximum unit group size for south biters.
+	global.max_group_size["north_biters"] = 300 --Maximum unit group size for north biters.
+	global.max_group_size["south_biters"] = 300 --Maximum unit group size for south biters.
 	global.biter_spawn_unseen = {
 		["north"] = {
-			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
+			["medium-spitter"] = true,
+			["medium-biter"] = true,
+			["big-spitter"] = true,
+			["big-biter"] = true,
+			["behemoth-spitter"] = true,
+			["behemoth-biter"] = true,
 		},
 		["south"] = {
-			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
+			["medium-spitter"] = true,
+			["medium-biter"] = true,
+			["big-spitter"] = true,
+			["big-biter"] = true,
+			["behemoth-spitter"] = true,
+			["behemoth-biter"] = true,
 		},
 		["north_biters_boss"] = {
-			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
+			["medium-spitter"] = true,
+			["medium-biter"] = true,
+			["big-spitter"] = true,
+			["big-biter"] = true,
+			["behemoth-spitter"] = true,
+			["behemoth-biter"] = true,
 		},
 		["south_biters_boss"] = {
-			["medium-spitter"] = true, ["medium-biter"] = true, ["big-spitter"] = true, ["big-biter"] = true, ["behemoth-spitter"] = true, ["behemoth-biter"] = true
-		}
+			["medium-spitter"] = true,
+			["medium-biter"] = true,
+			["big-spitter"] = true,
+			["big-biter"] = true,
+			["behemoth-spitter"] = true,
+			["behemoth-biter"] = true,
+		},
 	}
 	global.difficulty_vote_value = 1
 	global.difficulty_vote_index = 4
@@ -315,31 +342,33 @@ function Public.tables()
 	fifo.init()
 
 	global.next_attack = "north"
-	if global.random_generator(1,2) == 1 then global.next_attack = "south" end
+	if global.random_generator(1, 2) == 1 then
+		global.next_attack = "south"
+	end
 end
 
 function Public.load_spawn()
 	local surface = game.surfaces[global.bb_surface_name]
-	surface.request_to_generate_chunks({x = 0, y = 0}, 1)
+	surface.request_to_generate_chunks({ x = 0, y = 0 }, 1)
 	surface.force_generate_chunk_requests()
 
-	surface.request_to_generate_chunks({x = 0, y = 0}, 2)
+	surface.request_to_generate_chunks({ x = 0, y = 0 }, 2)
 	surface.force_generate_chunk_requests()
 
 	for y = 0, 576, 32 do
-		surface.request_to_generate_chunks({x = 80, y = y + 16}, 0)
-		surface.request_to_generate_chunks({x = 48, y = y + 16}, 0)
-		surface.request_to_generate_chunks({x = 16, y = y + 16}, 0)
-		surface.request_to_generate_chunks({x = -16, y = y - 16}, 0)
-		surface.request_to_generate_chunks({x = -48, y = y - 16}, 0)
-		surface.request_to_generate_chunks({x = -80, y = y - 16}, 0)
+		surface.request_to_generate_chunks({ x = 80, y = y + 16 }, 0)
+		surface.request_to_generate_chunks({ x = 48, y = y + 16 }, 0)
+		surface.request_to_generate_chunks({ x = 16, y = y + 16 }, 0)
+		surface.request_to_generate_chunks({ x = -16, y = y - 16 }, 0)
+		surface.request_to_generate_chunks({ x = -48, y = y - 16 }, 0)
+		surface.request_to_generate_chunks({ x = -80, y = y - 16 }, 0)
 
-		surface.request_to_generate_chunks({x = 80, y = y * -1 + 16}, 0)
-		surface.request_to_generate_chunks({x = 48, y = y * -1 + 16}, 0)
-		surface.request_to_generate_chunks({x = 16, y = y * -1 + 16}, 0)
-		surface.request_to_generate_chunks({x = -16, y = y * -1 - 16}, 0)
-		surface.request_to_generate_chunks({x = -48, y = y * -1 - 16}, 0)
-		surface.request_to_generate_chunks({x = -80, y = y * -1 - 16}, 0)
+		surface.request_to_generate_chunks({ x = 80, y = y * -1 + 16 }, 0)
+		surface.request_to_generate_chunks({ x = 48, y = y * -1 + 16 }, 0)
+		surface.request_to_generate_chunks({ x = 16, y = y * -1 + 16 }, 0)
+		surface.request_to_generate_chunks({ x = -16, y = y * -1 - 16 }, 0)
+		surface.request_to_generate_chunks({ x = -48, y = y * -1 - 16 }, 0)
+		surface.request_to_generate_chunks({ x = -80, y = y * -1 - 16 }, 0)
 	end
 end
 
@@ -354,16 +383,16 @@ function Public.forces()
 	local surface = game.surfaces[global.bb_surface_name]
 
 	local f = game.forces["north"]
-	f.set_spawn_position({0, -44}, surface)
-	f.set_cease_fire('player', true)
+	f.set_spawn_position({ 0, -44 }, surface)
+	f.set_cease_fire("player", true)
 	f.set_friend("spectator", true)
 	f.set_friend("south_biters", true)
 	f.set_friend("south_biters_boss", true)
 	f.share_chart = true
 
 	local f = game.forces["south"]
-	f.set_spawn_position({0, 44}, surface)
-	f.set_cease_fire('player', true)
+	f.set_spawn_position({ 0, 44 }, surface)
+	f.set_cease_fire("player", true)
 	f.set_friend("spectator", true)
 	f.set_friend("north_biters", true)
 	f.set_friend("north_biters_boss", true)
@@ -388,7 +417,6 @@ function Public.forces()
 	f.set_friend("spectator", true)
 	f.share_chart = false
 	global.dead_units[f.index] = fifo.create(global.bb_fifo_size)
-	
 
 	local f = game.forces["north_biters_boss"]
 	f.set_friend("south_biters", true)
@@ -411,7 +439,7 @@ function Public.forces()
 	global.dead_units[f.index] = fifo.create(global.bb_fifo_size)
 
 	local f = game.forces["spectator"]
-	f.set_spawn_position({0,0},surface)
+	f.set_spawn_position({ 0, 0 }, surface)
 	f.technologies["toolbelt"].researched = true
 	f.set_cease_fire("north_biters", true)
 	f.set_cease_fire("south_biters", true)
@@ -421,12 +449,12 @@ function Public.forces()
 	f.share_chart = true
 
 	local f = game.forces["player"]
-	f.set_spawn_position({0,0},surface)
-	f.set_cease_fire('spectator', true)
+	f.set_spawn_position({ 0, 0 }, surface)
+	f.set_cease_fire("spectator", true)
 	f.set_cease_fire("north_biters", true)
 	f.set_cease_fire("south_biters", true)
-	f.set_cease_fire('north', true)
-	f.set_cease_fire('south', true)
+	f.set_cease_fire("north", true)
+	f.set_cease_fire("south", true)
 	f.share_chart = false
 
 	for _, force in pairs(game.forces) do
@@ -446,18 +474,15 @@ function Public.forces()
 	end
 	for _, force in pairs(Tables.ammo_modified_forces_list) do
 		for ammo_category, value in pairs(Tables.base_ammo_modifiers) do
-			game.forces[force]
-				.set_ammo_damage_modifier(ammo_category, value)
+			game.forces[force].set_ammo_damage_modifier(ammo_category, value)
 		end
 	end
 
 	for _, force in pairs(Tables.ammo_modified_forces_list) do
 		for turret_category, value in pairs(Tables.base_turret_attack_modifiers) do
-			game.forces[force]
-				.set_turret_attack_modifier(turret_category, value)
+			game.forces[force].set_turret_attack_modifier(turret_category, value)
 		end
 	end
-
 end
 
 return Public
