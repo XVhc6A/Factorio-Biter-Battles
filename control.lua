@@ -1,45 +1,45 @@
-require 'utils.data_stages'
+require "utils.data_stages"
 _LIFECYCLE = _STAGE.control -- Control stage
 
-require 'utils.server'
-require 'utils.server_commands'
-require 'utils.utils'
-require 'utils.table'
-require 'utils.freeplay'
-require 'utils.datastore.color_data'
-require 'utils.datastore.session_data'
-require 'utils.datastore.jail_data'
-require 'utils.datastore.quickbar_data'
-require 'utils.datastore.message_on_join_data'
-require 'utils.datastore.player_tag_data'
-require 'utils.muted'
-require 'chatbot'
-require 'commands'
-require 'antigrief'
-require 'modules.corpse_markers'
-require 'modules.floaty_chat'
-require 'modules.show_inventory'
+require "utils.server"
+require "utils.server_commands"
+require "utils.utils"
+require "utils.table"
+require "utils.freeplay"
+require "utils.datastore.color_data"
+require "utils.datastore.session_data"
+require "utils.datastore.jail_data"
+require "utils.datastore.quickbar_data"
+require "utils.datastore.message_on_join_data"
+require "utils.datastore.player_tag_data"
+require "utils.muted"
+require "chatbot"
+require "commands"
+require "antigrief"
+require "modules.corpse_markers"
+require "modules.floaty_chat"
+require "modules.show_inventory"
 
-require 'comfy_panel.main'
-require 'comfy_panel.player_list'
-require 'comfy_panel.admin'
-require 'comfy_panel.histories'
-require 'comfy_panel.group'
-require 'comfy_panel.poll'
-require 'comfy_panel.score'
-require 'comfy_panel.config'
-require 'comfy_panel.special_games'
+require "comfy_panel.main"
+require "comfy_panel.player_list"
+require "comfy_panel.admin"
+require "comfy_panel.histories"
+require "comfy_panel.group"
+require "comfy_panel.poll"
+require "comfy_panel.score"
+require "comfy_panel.config"
+require "comfy_panel.special_games"
 
 ---------------- ENABLE MAPS HERE ----------------
 --![[North VS South Survival PVP, feed the opposing team's biters with science flasks. Disable Autostash, Group and Poll modules.]]--
-require 'maps.biter_battles_v2.main'
+require "maps.biter_battles_v2.main"
 
 ---------------------------------------------------------------
 
 
 local loaded = _G.package.loaded
 function require(path)
-    return loaded[path] or error('Can only require files at runtime that have been required in the control stage.', 2)
+	return loaded[path] or error("Can only require files at runtime that have been required in the control stage.", 2)
 end
 
 ---------------- Central Dispatch of Events ----------------
@@ -68,6 +68,7 @@ local MapsBiterBattlesV2AiStrikes = require "maps.biter_battles_v2.ai_strikes"
 local MapsBiterBattlesV2DifficultyVote = require "maps.biter_battles_v2.difficulty_vote"
 local MapsBiterBattlesV2GameOver = require "maps.biter_battles_v2.game_over"
 local MapsBiterBattlesV2Gui = require "maps.biter_battles_v2.gui"
+local MapsBiterBattlesV2Guiv2Main = require "maps.biter_battles_v2.guiv2.main"
 local MapsBiterBattlesV2Init = require "maps.biter_battles_v2.init"
 local MapsBiterBattlesV2Main = require "maps.biter_battles_v2.main"
 local MapsBiterBattlesV2MirrorTerrain = require "maps.biter_battles_v2.mirror_terrain"
@@ -228,7 +229,7 @@ Event.add(
 
 Event.add_event_filter(
 	defines.events.on_entity_damaged,
-	{filter = "type", type = "unit"}
+	{ filter = "type", type = "unit" }
 )
 
 Event.add(
@@ -258,6 +259,9 @@ Event.add(
 		local player = game.get_player(event.player_index)
 		local element = event.element
 		if element.valid and player then
+			local used_click = MapsBiterBattlesV2Guiv2Main.handle_click(element.name)
+			if used_click then return end
+
 			if not element.valid then return end
 			ModulesShowInventory.on_gui_click(player, element)
 
@@ -456,7 +460,7 @@ Event.add(
 Event.add(
 	defines.events.on_player_died,
 	---@param event EventData.on_player_died
-	function(event)
+	function (event)
 		local player = game.players[event.player_index]
 		if player.valid then
 			ComfyPanelScore.on_player_died(player)
@@ -482,7 +486,9 @@ Event.add(
 	function (event)
 		local player = game.players[event.player_index]
 		if player.valid then
-			-- This detrmines the order of the buttons in the top bar
+			-- This determines the order of the buttons in the top bar
+			-- ComfyPanelGui. (player)
+			--
 			ComfyPanelMain.top_button(player)
 			ComfyPanelPoll.on_player_joined_game(player)
 			MapsBiterBattlesV2DifficultyVote.on_player_joined_game(player)
@@ -502,6 +508,8 @@ Event.add(
 
 			UtilsServer.on_player_joined_game(player)
 			UtilsServer.set_total_time_played(player)
+
+			MapsBiterBattlesV2Guiv2Main.create_master_gui(player.gui.top)
 
 			local secs = UtilsServer.get_current_time()
 			if secs then
@@ -614,9 +622,9 @@ Event.add(
 
 Event.add_event_filter(
 	defines.events.on_post_entity_died, {
-	filter = "type",
-	type = "unit",
-})
+		filter = "type",
+		type = "unit",
+	})
 
 
 Event.add(defines.events.on_pre_player_crafted_item, function (event)
@@ -714,7 +722,7 @@ Event.add(defines.events.on_tick,
 )
 
 Event.on_init(
-	function (event)
+	function ()
 		Antigrief.init_antigrief()
 		ComfyPanelConfig.init_comfy_panel_config()
 		FunctionsBossUnit.init_boss_unit_module()
@@ -730,6 +738,6 @@ Event.on_init(
 		MapsBiterBattlesV2Init.draw_structures()
 		MapsBiterBattlesV2Init.load_spawn()
 		MapsBiterBattlesV2Init.reveal_map()
+		MapsBiterBattlesV2Gui.init()
 	end
 )
-

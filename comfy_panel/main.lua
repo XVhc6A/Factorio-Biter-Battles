@@ -73,7 +73,7 @@ end
 
 local function main_frame(player)
     local tabs = comfy_panel_tabs
-    Public.comfy_panel_clear_left_gui(player)
+    -- Public.comfy_panel_clear_left_gui(player)
 
     local frame = player.gui.left.add({type = 'frame', name = 'comfy_panel'})
     frame.style.margin = 6

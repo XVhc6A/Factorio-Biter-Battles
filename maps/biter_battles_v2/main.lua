@@ -240,7 +240,7 @@ function Public.on_tick(tick)
 		end
 	end
 
-	if tick % 30 == 0 then	
+	if tick % 30 == 0 then
 		local key = tick % 3600
 		if tick_minute_functions[key] then
 			tick_minute_functions[key]()
