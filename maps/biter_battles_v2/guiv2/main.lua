@@ -3,19 +3,34 @@ local ComboPanel = require("maps.biter_battles_v2.guiv2.combo_panel.main")
 
 local Public = {}
 
----@type table<string, function>
-local gui_element_event_handlers = {}
+---@type table<defines.events, table<string, function>>
+local gui_element_event_handlers = {
+	[defines.events.on_gui_leave] = {},
+	[defines.events.on_gui_selection_state_changed] = {},
+	[defines.events.on_gui_hover] = {},
+	[defines.events.on_gui_click] = {},
+	[defines.events.on_gui_closed] = {},
+	[defines.events.on_gui_opened] = {},
+	[defines.events.on_gui_confirmed] = {},
+	[defines.events.on_gui_elem_changed] = {},
+	[defines.events.on_gui_text_changed] = {},
+	[defines.events.on_gui_value_changed] = {},
+	[defines.events.on_gui_location_changed] = {},
+	[defines.events.on_gui_selected_tab_changed] = {},
+	[defines.events.on_gui_switch_state_changed] = {},
+	[defines.events.on_gui_checked_state_changed] = {},
+}
 
 ---@class Guiv2ElementPair
 ---@field tab LuaGuiElement
 ---@field frame LuaGuiElement
 
-
-
+---@param event_type defines.events
 ---@param lge_name string
 ---@return boolean
-function Public.handle_click(lge_name)
-	local handler = gui_element_event_handlers[lge_name]
+function Public.handle_event(event_type, lge_name)
+	---TODO this should be globals per player maybe?
+	local handler = gui_element_event_handlers[event_type[lge_name]
 	if handler then
 		handler()
 		return true

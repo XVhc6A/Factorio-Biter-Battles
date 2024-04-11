@@ -174,7 +174,6 @@ Event.add(
 		local player = game.players[event.player_index]
 		local message = event.message
 		if message and player and player.valid then
-			Chatbot.on_console_chat(player, message)
 			ComfyPanelHistories.on_console_chat(player, message)
 			MapsBiterBattlesV2GameOver.chat_with_everyone(player, message)
 			MapsBiterBattlesV2Main.on_console_chat(player, message)
@@ -259,7 +258,7 @@ Event.add(
 		local player = game.get_player(event.player_index)
 		local element = event.element
 		if element.valid and player then
-			local used_click = MapsBiterBattlesV2Guiv2Main.handle_click(element.name)
+			local used_click = MapsBiterBattlesV2Guiv2Main.handle_event(defines.events.on_gui_click, element.name)
 			if used_click then return end
 
 			if not element.valid then return end
@@ -488,7 +487,7 @@ Event.add(
 		if player.valid then
 			-- This determines the order of the buttons in the top bar
 			-- ComfyPanelGui. (player)
-			--
+
 			ComfyPanelMain.top_button(player)
 			ComfyPanelPoll.on_player_joined_game(player)
 			MapsBiterBattlesV2DifficultyVote.on_player_joined_game(player)

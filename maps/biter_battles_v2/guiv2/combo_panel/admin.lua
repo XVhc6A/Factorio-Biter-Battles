@@ -1,7 +1,6 @@
 local Public = {}
 local Jailed = require "utils.datastore.jail_data"
 
-
 local function admin_only_message(str)
 	for _, player in pairs(game.connected_players) do
 		if player.admin == true then
@@ -9,8 +8,6 @@ local function admin_only_message(str)
 		end
 	end
 end
-
-
 
 ---@param parent LuaGuiElement
 ---@param prefix string
@@ -374,7 +371,7 @@ end
 ---@param parent LuaGuiElement
 ---@param prefix string
 ---@param selected_player_dropdown LuaGuiElement
----@param handlers table<string, function>
+---@param handlers table<defines.events, table<string, function>>
 ---@return LuaGuiElement
 local function add_admin_task_buttons(parent, prefix, selected_player_dropdown, handlers)
 	local t = parent.add({ type = "table", column_count = 3 })
@@ -403,7 +400,7 @@ local function add_admin_task_buttons(parent, prefix, selected_player_dropdown, 
 		button.style.font = "default-bold"
 		button.style.font_color = { r = 0.99, g = 0.99, b = 0.99 }
 		button.style.minimal_width = 106
-		handlers[button_params.name] = button_params.handler
+		handlers[defines.events.on_gui_click][button_params.name] = button_params.handler
 	end
 	return t
 end
@@ -499,7 +496,7 @@ end
 
 ---@param parent LuaGuiElement
 ---@param prefix string
----@param handlers table<string, function>
+---@param handlers table<defines.events, table<string, function>>
 ---@return LuaGuiElement
 local function add_admin_global_task_buttons(parent, prefix, handlers)
 	parent.add({ type = "label", caption = "Global Actions:" })
@@ -523,7 +520,7 @@ local function add_admin_global_task_buttons(parent, prefix, handlers)
 		button.style.font = "default-bold"
 		button.style.font_color = { r = 0.45, g = 0.1, b = 0.1 }
 		button.style.minimal_width = 106
-		handlers[admin_task_definition.name] = admin_task_definition.handler
+		handlers[defines.events.on_gui_click][admin_task_definition.name] = admin_task_definition.handler
 	end
 
 	local line = parent.add({ type = "line" })
@@ -534,8 +531,9 @@ end
 
 ---@param tabbed_pane LuaGuiElement
 ---@param prefix string
+---@param handlers table<defines.events, table<string, function>>
 ---@return LuaGuiElement
-function Public.create_admin_frame(tabbed_pane, prefix, handlers)
+local function create_admin_frame(tabbed_pane, prefix, handlers)
 	local parent = tabbed_pane.add({ type = "frame", direction = "vertical" })
 	local select_player_dropdown = add_select_player_dropdown(parent, prefix)
 	local line1 = parent.add({ type = "line" })
@@ -550,10 +548,10 @@ function Public.create_admin_frame(tabbed_pane, prefix, handlers)
 end
 
 ---@param tabbed_pane LuaGuiElement
----@param handlers table<string, function>
+---@param handlers table<defines.events, table<string, function>>
 ---@param prefix string
 function Public.add_to_tabbed_pane(tabbed_pane, prefix, handlers)
-	local frame = Public.create_admin_frame(tabbed_pane, prefix, handlers)
+	local frame = create_admin_frame(tabbed_pane, prefix, handlers)
 	local tab = tabbed_pane.add({ type = "tab", caption = "Admin" })
 	tabbed_pane.add_tab(tab, frame)
 end

@@ -1,6 +1,6 @@
 local PlayerListTab = require("maps.biter_battles_v2.guiv2.combo_panel.playerlist")
 local AdminTab = require("maps.biter_battles_v2.guiv2.combo_panel.admin")
-local HistoryTab = require("maps.biter_battles_v2.guiv2.combo_panel.admin")
+local HistoryTab = require("maps.biter_battles_v2.guiv2.combo_panel.history")
 
 local Public = {}
 
@@ -8,7 +8,7 @@ local Public = {}
 ---@param tab_flow LuaGuiElement
 ---@param frame_flow LuaGuiElement
 ---@param prefix string
----@param handlers table<string, function>
+---@param handlers table<defines.events, table<string, function>>
 ---@return Guiv2ElementPair[]
 function Public.add_tab_frame_and_handlers(tab_flow, frame_flow, prefix, handlers)
 	local tabbed_pane_name = prefix .. "_tabbed_pane"
